@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: 
+
+Sitemap: http://warewolf.github.io/sitemap.xml 

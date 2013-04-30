@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ruby, | Technical Generalism]]></title>
   <link href="http://warewolf.github.io/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://warewolf.github.io/"/>
-  <updated>2013-04-29T21:13:09-04:00</updated>
+  <updated>2013-04-30T00:00:00-04:00</updated>
   <id>http://warewolf.github.io/</id>
   <author>
     <name><![CDATA[Richard Harman]]></name>
@@ -118,7 +118,7 @@ Successfully generated site: source -> public</p>
 
 <p>I've got a few tricks up my sleeve, one of which I use for helping me secure automated batch processing through ssh pubkeys.  Note to self: <em>write this up later!</em></p>
 
-<p>Lets look at the execution environment of <code>compass</code> and <code>jekyll</code> when run via <code>rake generate</code>.  I do this by running the command through bash, but as a series of commands all instead of just one.  I compared this to my normal shell environment and saw some things that were added.</p>
+<p>Lets look at the execution environment of <code>compass</code> and <code>jekyll</code> when run via <code>rake generate</code>.  I do this by running the command through bash, but as a series of commands instead of just one.  I compared this to my normal shell environment and saw some things that were added.</p>
 
 <p><code>ruby bash -c ftw
   system "bash -c 'set; jekyll'"

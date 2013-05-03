@@ -4,7 +4,7 @@
   <title><![CDATA[Category: octopress | Technical Generalism]]></title>
   <link href="http://warewolf.github.io/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://warewolf.github.io/"/>
-  <updated>2013-04-30T00:28:31-04:00</updated>
+  <updated>2013-05-02T21:40:22-04:00</updated>
   <id>http://warewolf.github.io/</id>
   <author>
     <name><![CDATA[Richard Harman]]></name>
@@ -41,7 +41,8 @@
 <code>sh Installing the Octopress theme
 $ rake install
 rake aborted!
-You have already activated rake 0.9.6, but your Gemfile requires rake 0.9.2.2. Using bundle exec may solve this.
+You have already activated rake 0.9.6, but your Gemfile requires rake 0.9.2.2.
+Using bundle exec may solve this.
 </code>
 This was because I had a copy of <code>rake</code> from my system in <code>/bin/rake</code>, and a copy from <code>bundle</code> in <code>~/.gem</code> somewhere.  <strong>I wasn't using the version of <code>rake</code> specified by the <code>Gemfile.lock</code> that <code>bundle</code> downloaded</strong>.  From the error message I learned about the <code>bundle exec</code> command.  This tries to run the specific versions of programs that are part of your application's bundle.</p>
 

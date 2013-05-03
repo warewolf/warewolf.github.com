@@ -4,7 +4,7 @@
   <title><![CDATA[Technical Generalism]]></title>
   <link href="http://warewolf.github.io/atom.xml" rel="self"/>
   <link href="http://warewolf.github.io/"/>
-  <updated>2013-04-30T00:28:31-04:00</updated>
+  <updated>2013-05-02T21:40:21-04:00</updated>
   <id>http://warewolf.github.io/</id>
   <author>
     <name><![CDATA[Richard Harman]]></name>
@@ -42,9 +42,11 @@
 <figure class='code'><figcaption><span>Installing the Octopress theme</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
+<span class='line-number'>4</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>rake install
 </span><span class='line'>rake aborted!
-</span><span class='line'>You have already activated rake 0.9.6, but your Gemfile requires rake 0.9.2.2. Using bundle <span class="nb">exec </span>may solve this.
+</span><span class='line'>You have already activated rake 0.9.6, but your Gemfile requires rake 0.9.2.2.
+</span><span class='line'>Using bundle <span class="nb">exec </span>may solve this.
 </span></code></pre></td></tr></table></div></figure>
 
 

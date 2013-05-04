@@ -1,0 +1,295 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Nova Labs MAL100 classes: status - Technical Generalism</title>
+  <meta name="author" content="Richard Harman">
+
+  
+  <meta name="description" content="The Nova Labs MAL100 class in April was a hit, and there&#8217;s one upcoming in May on the 15th that has already filled up all available slots. That &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://warewolf.github.io/blog/2013/05/04/nova-labs-mal100-classes-status">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Technical Generalism" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Technical Generalism</a></h1>
+  
+    <h2>Work-in-progress projects, ideas, how-tos, and rants from a guy in the InfoSec industry</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:warewolf.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Nova Labs MAL100 Classes: Status</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-04T00:29:00-04:00" pubdate data-updated="true">May 4<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>The <a href="http://www.nova-labs.org">Nova Labs</a> MAL100 class in <a href="http://www.meetup.com/NOVA-Makers/events/107980132/">April</a> was a hit, and there&#8217;s one upcoming in  <a href="http://www.meetup.com/NOVA-Makers/events/115134982/">May</a> on the 15th that has already filled up all available slots.  That&#8217;s fantastic, but it&#8217;s going to take forever for me to <em>train</em> everybody if I&#8217;m doing it at 15 students at a time.  I&#8217;ve got some work to do for making things available to students whom are remote.<!-- more --></p>
+
+<h2>The issues at hand:</h2>
+
+<ul>
+<li><p>All the student VMs are on the same virtual network.</p>
+
+<p>This allows network cross-contamination (one student can generate traffic another student will see), which will lead to confusion.  The VMs per student need to be segregated to their own virtual network.</p>
+
+<p>How to fix: <strong>Script up automation of creating new virtual bridges in libvirt.</strong></p></li>
+<li><p>There isn&#8217;t really any &#8220;network&#8221; access to the Windows VM.</p>
+
+<p>The MITM system is connected to the Nova Labs network, and the Windows VMs are connected to a &#8220;malware&#8221; virtual network that is also connected to the MITM system.  I think I&#8217;ll need more advanced connectivity for more complex lab exercises later.</p>
+
+<p>How to fix: <strong>Make dedicated MITM VMs &amp; dedicated &#8220;malware&#8221; virtual networks per student.</strong></p></li>
+<li><p>I need a way to temporarially grant secure access to people remotely.</p>
+
+<p>I&#8217;m thinking <a href="http://www.openvpn.net">OpenVPN</a>.  It&#8217;s cross-platform, and I can use x509 certificates that I generate using <a href="http://www.sm-zone.net/">TinyCA2</a>.  I&#8217;ll do certificate revocation status checking as described by <a href="http://isrlabs.net/wordpress/?p=169">this guy here</a>.</p>
+
+<p>How to fix: <strong>Set up a Certificate Authority for the lab, and get OpenVPN running.</strong></p></li>
+<li><p>Segregate remote students from each other so they can&#8217;t attack each other.
+I think I can handle this with scripts in OpenVPN, and some <a href="https://www.google.com/search?q=libvirt+network+filters">network filters in libvirt</a>.  I need to &#8220;link&#8221; an OpenVPN connection to a libvirt virtual network so that one student can&#8217;t touch another student&#8217;s network.</p>
+
+<p>How to fix: <strong>Research OpenVPN scripting and libvirt network filters.</strong></p></li>
+<li><p>I&#8217;m concerned about our internet connection bandwidth at the space.</p>
+
+<p> I&#8217;m sharing out two VNC screens per analyst.  The Instructor VM 15 times over, and one dedicated screen per student.  <strong>That&#8217;s a total of 30 concurrent VNC sessions.</strong>  That&#8217;s a lot of bandwidth if all 15 students are remote.  I&#8217;m considering buying a <a href="http://www.linode.com/?r=8304c52b0c2b67372d5dcbe998ee4e04271275d6">Linode</a> for just the bandwidth so I can send one VNC stream of the Instructor VM from the space to the Linode, and then have the Linode &#8220;broadcast&#8221; that to the remote students.  The dedicated student VM VNC sessions would still be sent directly from the space to the remote students.</p>
+
+<p>How to fix: <strong>Buy a linode and limit the number of remote students.</strong></p></li>
+<li><p>Work out the kinks in streaming.</p>
+
+<p>I heard someone say that the best setup for streaming is just the instructor audio, and then a stream of the slide deck.  E.g., don&#8217;t bother with putting a talking head on screen.  I think I like that idea, and I think that makes things easier for <a href="http://www.ustream.tv/channel/nova-labs-class-room">UStream</a>.</p>
+
+<p>The audio in the first class wasn&#8217;t that great because I wasn&#8217;t mic&#8217;d directly.  There was a lot of ambient audio in the background.  I think I need to bring either a bluetooth hands-free headset, or bring my <a href="http://www.amazon.com/PlayStation-2-USB-Headset/dp/B00009YEK5">Playstation USB headset</a>.</p>
+
+<p>The video cut out on the stream a couple of times - I&#8217;m not sure what caused that :(</p></li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Richard Harman</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-04T00:29:00-04:00" pubdate data-updated="true">May 4<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/libvirt/'>libvirt,</a>, <a class='category' href='/blog/categories/malware/'>malware,</a>, <a class='category' href='/blog/categories/openvpn/'>openvpn</a>, <a class='category' href='/blog/categories/perl/'>perl,</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://warewolf.github.io/blog/2013/05/04/nova-labs-mal100-classes-status/" data-via="xabean" data-counturl="http://warewolf.github.io/blog/2013/05/04/nova-labs-mal100-classes-status/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/04/28/adventures-in-ruby/" title="Previous Post: Adventures in Ruby">&laquo; Adventures in Ruby</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/05/04/nova-labs-mal100-classes-status/">Nova Labs MAL100 classes: status</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/28/adventures-in-ruby/">Adventures in Ruby</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Twitter</h1>
+  <a class="twitter-timeline"  href="https://twitter.com/xabean"  data-widget-id="329039604705529857">Tweets by @xabean</a>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/warewolf">@warewolf</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'warewolf',
+            count: 2,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Richard Harman -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'warewolf';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://warewolf.github.io/blog/2013/05/04/nova-labs-mal100-classes-status/';
+        var disqus_url = 'http://warewolf.github.io/blog/2013/05/04/nova-labs-mal100-classes-status/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

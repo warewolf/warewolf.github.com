@@ -2,21 +2,19 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://warewolf.github.io/blog/2013/04/28/adventures-in-ruby/</loc>
-        <lastmod>2013-05-01T23:57:46-04:00</lastmod>
+        <lastmod>2013-05-04T01:14:01-04:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://warewolf.github.io/blog/2013/04/29/passwordless-and-secure-ssh-keys-for-log-pulls/
-        </loc>
-        <lastmod>2013-05-02T08:03:01-04:00</lastmod>
+        <loc>http://warewolf.github.io/blog/2013/05/04/nova-labs-mal100-classes-status/</loc>
+        <lastmod>2013-05-04T14:47:38-04:00</lastmod>
     </url>
     <url>
         <loc>http://warewolf.github.io/</loc>
-        <lastmod>2013-05-02T08:03:01-04:00</lastmod>
+        <lastmod>2013-05-04T14:47:38-04:00</lastmod>
     </url>
     <url>
         <loc>http://warewolf.github.io/blog/archives/</loc>
-        <lastmod>2013-05-02T08:03:01-04:00</lastmod>
+        <lastmod>2013-05-04T14:47:38-04:00</lastmod>
     </url>
     <url>
         <loc>http://warewolf.github.io/robots.txt</loc>

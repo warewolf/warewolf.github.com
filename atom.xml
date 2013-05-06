@@ -4,7 +4,7 @@
   <title><![CDATA[Technical Generalism]]></title>
   <link href="http://warewolf.github.io/atom.xml" rel="self"/>
   <link href="http://warewolf.github.io/"/>
-  <updated>2013-05-04T14:49:08-04:00</updated>
+  <updated>2013-05-06T08:14:35-04:00</updated>
   <id>http://warewolf.github.io/</id>
   <author>
     <name><![CDATA[Richard Harman]]></name>
@@ -16,6 +16,15 @@
   <entry>
     <title type="html"><![CDATA[Nova Labs MAL100 classes: status]]></title>
     <link href="http://warewolf.github.io/blog/2013/05/04/nova-labs-mal100-classes-status/"/>
+    
+    <category scheme="http://warewolf.github.io/categories/" term="libvirt," />
+    
+    <category scheme="http://warewolf.github.io/categories/" term="malware," />
+    
+    <category scheme="http://warewolf.github.io/categories/" term="openvpn" />
+    
+    <category scheme="http://warewolf.github.io/categories/" term="perl," />
+    
     <updated>2013-05-04T00:29:00-04:00</updated>
     <id>http://warewolf.github.io/blog/2013/05/04/nova-labs-mal100-classes-status</id>
     <content type="html"><![CDATA[<p>The <a href="http://www.nova-labs.org">Nova Labs</a> MAL100 class in <a href="http://www.meetup.com/NOVA-Makers/events/107980132/">April</a> was a hit, and there&#8217;s one upcoming in  <a href="http://www.meetup.com/NOVA-Makers/events/115134982/">May</a> on the 15th that has already filled up all available slots.  That&#8217;s fantastic, but it&#8217;s going to take forever for me to <em>train</em> everybody if I&#8217;m doing it at 15 students at a time.  I&#8217;ve got some work to do for making things available to students whom are remote.<!-- more --></p>
@@ -62,6 +71,11 @@ I think I can handle this with scripts in OpenVPN, and some <a href="https://www
   <entry>
     <title type="html"><![CDATA[Adventures in Ruby]]></title>
     <link href="http://warewolf.github.io/blog/2013/04/28/adventures-in-ruby/"/>
+    
+    <category scheme="http://warewolf.github.io/categories/" term="octopress" />
+    
+    <category scheme="http://warewolf.github.io/categories/" term="ruby," />
+    
     <updated>2013-04-28T15:44:00-04:00</updated>
     <id>http://warewolf.github.io/blog/2013/04/28/adventures-in-ruby</id>
     <content type="html"><![CDATA[<p>After reading a <a href="http://isrlabs.net/wordpress/?p=169">a blog post on exactly what I needed</a> for students to remotely access the virtual machines in the <a href="http://www.nova-labs.org/">Nova Labs</a> classes, I decided I needed to give back to the community just a bit more.  Because I like github, and because I&#8217;ve used github-pages before, I decided on <a href="http://octopress.org/">Octopress</a>.  I&#8217;d soon find out this wouldn&#8217;t be as simple as setting up github-pages for my <a href="http://warewolf.github.com/thin-provisioning/">thin-provisioning</a> site, which oddly enough appears to be returning a 404 as I compose this post. <em>Sigh</em>.</p>

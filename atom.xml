@@ -4,7 +4,7 @@
   <title><![CDATA[Technical Generalism]]></title>
   <link href="http://warewolf.github.io/atom.xml" rel="self"/>
   <link href="http://warewolf.github.io/"/>
-  <updated>2013-05-06T08:14:35-04:00</updated>
+  <updated>2013-05-06T08:17:30-04:00</updated>
   <id>http://warewolf.github.io/</id>
   <author>
     <name><![CDATA[Richard Harman]]></name>
@@ -17,13 +17,13 @@
     <title type="html"><![CDATA[Nova Labs MAL100 classes: status]]></title>
     <link href="http://warewolf.github.io/blog/2013/05/04/nova-labs-mal100-classes-status/"/>
     
-    <category scheme="http://warewolf.github.io/categories/" term="libvirt," />
+    <category scheme="http://warewolf.github.io/categories/" term="libvirt" />
     
-    <category scheme="http://warewolf.github.io/categories/" term="malware," />
+    <category scheme="http://warewolf.github.io/categories/" term="malware" />
     
     <category scheme="http://warewolf.github.io/categories/" term="openvpn" />
     
-    <category scheme="http://warewolf.github.io/categories/" term="perl," />
+    <category scheme="http://warewolf.github.io/categories/" term="perl" />
     
     <updated>2013-05-04T00:29:00-04:00</updated>
     <id>http://warewolf.github.io/blog/2013/05/04/nova-labs-mal100-classes-status</id>
@@ -74,7 +74,7 @@ I think I can handle this with scripts in OpenVPN, and some <a href="https://www
     
     <category scheme="http://warewolf.github.io/categories/" term="octopress" />
     
-    <category scheme="http://warewolf.github.io/categories/" term="ruby," />
+    <category scheme="http://warewolf.github.io/categories/" term="ruby" />
     
     <updated>2013-04-28T15:44:00-04:00</updated>
     <id>http://warewolf.github.io/blog/2013/04/28/adventures-in-ruby</id>

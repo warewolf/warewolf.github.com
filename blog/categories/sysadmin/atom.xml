@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: sysadmin | Technical Generalism]]></title>
+  <link href="http://warewolf.github.io/blog/categories/sysadmin/atom.xml" rel="self"/>
+  <link href="http://warewolf.github.io/"/>
+  <updated>2013-05-13T00:00:50-04:00</updated>
+  <id>http://warewolf.github.io/</id>
+  <author>
+    <name><![CDATA[Richard Harman]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Passwordless and secure SSH keys for log pulls]]></title>
+    <link href="http://warewolf.github.io/blog/2013/05/12/passwordless-and-secure-ssh-keys-for-log-pulls/"/>
+    <updated>2013-05-12T23:49:00-04:00</updated>
+    <id>http://warewolf.github.io/blog/2013/05/12/passwordless-and-secure-ssh-keys-for-log-pulls</id>
+    <content type="html"><![CDATA[<p>Secure passwordless SSH keys?  Surely some infosec policy auditor is crying right now.  Here&#8217;s how to pacify them with a couple of options you may or may not have heard of in <code>~/.ssh/authorized_keys</code>.<!-- more --></p>
+
+<p>So here&#8217;s the skinny.  You&#8217;ll need two things to get this done.</p>
+
+<ol>
+  <li>A dedicated SSH key for each batch log pull.</li>
+  <li>A simple shell script.</li>
+</ol>
+
+<p>Take a look at the <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=sshd&amp;sektion=8" target="_blank">sshd(8) man page</a>, and scroll down to the <code>AUTHORIZED_KEYS FILE FORMAT</code> section.  There&#8217;s a section on options there, where you can tell the SSH server to restrict clients connecting in with that key.  One of them is to force a command via <code>command="command here"</code>.  So that&#8217;s how to explicitly force a command to be run when an SSH client connects using that key.  It completely forbids you from trying to run anything else.  Sweet, huh?</p>
+
+<p>About that simple shell script.  The SSH daemon on the remote server puts the original command info an environment variable, <code>SSH_ORIGINAL_COMMAND</code>.  So here&#8217;s what you do.  Put the below script in /tmp/saveme.sh, <code>chmod a+rx</code> it to make it executable, and put <code>command="/tmp/saveme.sh"</code> in your <code>authorized_keys</code> file.</p>
+
+<p><code>sh simple shell script to save off the original command
+#!/bin/bash
+echo "Environment:" &gt;&gt; /tmp/command.txt
+set &gt;&gt; /tmp/command.txt
+echo "Arguments:" &gt;&gt; /tmp/command.txt
+echo $* &gt;&gt; /tmp/command.txt
+</code></p>
+
+<p>So run your command using the SSH key you have dedicated to the log pull, extract the arguments of what that program wants to run on the remote host by looking at /tmp/command.txt, and edit the <code>command="stuff"</code> line in your <code>authorized_keys</code> file.</p>
+
+<p>Now.  This is all about segmentation, least privilege, etc right?  So lets REALLY lock this down.  Other options you want to pay attention to:</p>
+
+<ul>
+  <li>from=&#8221;pattern-list&#8221; (go read man ssh_config<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> for details)</li>
+  <li>no-agent-forwarding</li>
+  <li>no-pty</li>
+  <li>no-port-forwarding</li>
+  <li>no-X11-forwarding</li>
+</ul>
+
+<p>So set up your rsync or whathaveyou in cron and begin pulling logs.  If you want to do log pulls say every 5 minutes, you could have multiple copies of the cron job running at once.  Prevent that with <a href="http://www.unixwiz.net/tools/lockrun.html">lockrun</a>.  Really this blog post is about SSH keys, but lockrun is where it really makes things shine.  Lockrun is a wrapper around a command to be run, which prevent concurrent copies of that program running via a simple lockfile.  You use this via cron.  It&#8217;s dead simple.</p>
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:1">
+      <p>from=&#8221;pattern-list&#8221; - <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=ssh_config&amp;sektion=5" target="_blank">the ssh_config(5) man page</a> contains details on how to use this to restrict what host and/or IP address is permitted to connect in using this key.<a href="#fnref:1" rel="reference">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+]]></content>
+  </entry>
+  
+</feed>

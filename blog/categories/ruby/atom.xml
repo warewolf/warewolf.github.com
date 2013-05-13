@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ruby | Technical Generalism]]></title>
   <link href="http://warewolf.github.io/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://warewolf.github.io/"/>
-  <updated>2013-05-06T08:17:30-04:00</updated>
+  <updated>2013-05-13T00:00:03-04:00</updated>
   <id>http://warewolf.github.io/</id>
   <author>
     <name><![CDATA[Richard Harman]]></name>
@@ -18,35 +18,34 @@
     <link href="http://warewolf.github.io/blog/2013/04/28/adventures-in-ruby/"/>
     <updated>2013-04-28T15:44:00-04:00</updated>
     <id>http://warewolf.github.io/blog/2013/04/28/adventures-in-ruby</id>
-    <content type="html"><![CDATA[<p>After reading a <a href="http://isrlabs.net/wordpress/?p=169">a blog post on exactly what I needed</a> for students to remotely access the virtual machines in the <a href="http://www.nova-labs.org/">Nova Labs</a> classes, I decided I needed to give back to the community just a bit more.  Because I like github, and because I've used github-pages before, I decided on <a href="http://octopress.org/">Octopress</a>.  I'd soon find out this wouldn't be as simple as setting up github-pages for my <a href="http://warewolf.github.com/thin-provisioning/">thin-provisioning</a> site, which oddly enough appears to be returning a 404 as I compose this post. <em>Sigh</em>.</p>
+    <content type="html"><![CDATA[<p>After reading a <a href="http://isrlabs.net/wordpress/?p=169">a blog post on exactly what I needed</a> for students to remotely access the virtual machines in the <a href="http://www.nova-labs.org/">Nova Labs</a> classes, I decided I needed to give back to the community just a bit more.  Because I like github, and because I&#8217;ve used github-pages before, I decided on <a href="http://octopress.org/">Octopress</a>.  I&#8217;d soon find out this wouldn&#8217;t be as simple as setting up github-pages for my <a href="http://warewolf.github.com/thin-provisioning/">thin-provisioning</a> site, which oddly enough appears to be returning a 404 as I compose this post. <em>Sigh</em>.</p>
 
-<p>This is the story of me getting Octopress operating "correctly" at home.<!-- more --></p>
+<p>This is the story of me getting Octopress operating &#8220;correctly&#8221; at home.<!-- more --></p>
 
-<p><strong>Note</strong>: I went through an iterative process of breaking shit, uninstalling, re-installing, troubleshooting, researching, uninstalling, re-installing things in a different way until things started working.  <strong>This lack of fear of breaking something that's already broken is special:  It's the SysAdmin way.</strong>  I've attempted to document below what went wrong and what I did to fix it, but as I attempt to re-trace my steps, things aren't adding up correctly.</p>
+<p><strong>Note</strong>: I went through an iterative process of breaking shit, uninstalling, re-installing, troubleshooting, researching, uninstalling, re-installing things in a different way until things started working.  <strong>This lack of fear of breaking something that&#8217;s already broken is special:  It&#8217;s the SysAdmin way.</strong>  I&#8217;ve attempted to document below what went wrong and what I did to fix it, but as I attempt to re-trace my steps, things aren&#8217;t adding up correctly.</p>
 
-<p>This was quite possibly my first real venture into the Ruby programming language, so I'm about as uninitiated as you can be.  I skimmed through the Octopress documentation, and started installing Ruby packages on my Fedora 18 home desktop.  A move I'd soon regret, in about 12 hours time.  <strong>Spoiler:</strong> I didn't know that the Ruby community has a thing for requiring specific versions of Ruby and associated Ruby gems (extensions, modules, or libraries by any other name) together with an application.  So Octopress had these <code>Gemfile</code> and <code>Gemfile.lock</code> files in the repository that described a specific Ruby environment that the Octopress developers had blessed as "good".</p>
+<p>This was quite possibly my first real venture into the Ruby programming language, so I&#8217;m about as uninitiated as you can be.  I skimmed through the Octopress documentation, and started installing Ruby packages on my Fedora 18 home desktop.  A move I&#8217;d soon regret, in about 12 hours time.  <strong>Spoiler:</strong> I didn&#8217;t know that the Ruby community has a thing for requiring specific versions of Ruby and associated Ruby gems (extensions, modules, or libraries by any other name) together with an application.  So Octopress had these <code>Gemfile</code> and <code>Gemfile.lock</code> files in the repository that described a specific Ruby environment that the Octopress developers had blessed as &#8220;good&#8221;.</p>
 
 <p>In good inquisitive hacker learning fashion, I completely and quite intentionally disregarded it all.  I learn by doing.  :)</p>
 
-<p>You're supposed to run <code>bundle install</code> to install Octopress's pre-requisites (including a specific version of the Ruby interpreter itself), which will end up in <code>~/.gem</code>.  Bundle's job is to make setting up an application <em>repeatable</em>, but I was unwittingly playing mix-master with <em>multiple versions</em> of gems and <em>multiple locations</em> Ruby gems could be installed on the file-system.</p>
+<p>You&#8217;re supposed to run <code>bundle install</code> to install Octopress&#8217;s pre-requisites (including a specific version of the Ruby interpreter itself), which will end up in <code>~/.gem</code>.  Bundle&#8217;s job is to make setting up an application <em>repeatable</em>, but I was unwittingly playing mix-master with <em>multiple versions</em> of gems and <em>multiple locations</em> Ruby gems could be installed on the file-system.</p>
 
 <ul>
-<li>/usr/share/gems <code>&lt;-- where RPM packages put gems</code></li>
-<li>/usr/local/share/gems <code>&lt;-- where gem(1) puts gems</code></li>
-<li>~/.gem/ruby/1.9.1/gems <code>&lt;-- where bundle puts gems</code></li>
+  <li>/usr/share/gems <code>&lt;-- where RPM packages put gems</code></li>
+  <li>/usr/local/share/gems <code>&lt;-- where gem(1) puts gems</code></li>
+  <li>~/.gem/ruby/1.9.1/gems <code>&lt;-- where bundle puts gems</code></li>
 </ul>
 
-
-<p>The first thing that went wrong was running Ruby's version of <code>make</code>, <code>rake</code> as part of <a href="http://octopress.org/docs/setup/">installing the default Octopress theme</a>.  Rake informed me that I was running too new of a version of rake:
+<p>The first thing that went wrong was running Ruby&#8217;s version of <code>make</code>, <code>rake</code> as part of <a href="http://octopress.org/docs/setup/">installing the default Octopress theme</a>.  Rake informed me that I was running too new of a version of rake:
 <code>sh Installing the Octopress theme
 $ rake install
 rake aborted!
 You have already activated rake 0.9.6, but your Gemfile requires rake 0.9.2.2.
 Using bundle exec may solve this.
 </code>
-This was because I had a copy of <code>rake</code> from my system in <code>/bin/rake</code>, and a copy from <code>bundle</code> in <code>~/.gem</code> somewhere.  <strong>I wasn't using the version of <code>rake</code> specified by the <code>Gemfile.lock</code> that <code>bundle</code> downloaded</strong>.  From the error message I learned about the <code>bundle exec</code> command.  This tries to run the specific versions of programs that are part of your application's bundle.</p>
+This was because I had a copy of <code>rake</code> from my system in <code>/bin/rake</code>, and a copy from <code>bundle</code> in <code>~/.gem</code> somewhere.  <strong>I wasn&#8217;t using the version of <code>rake</code> specified by the <code>Gemfile.lock</code> that <code>bundle</code> downloaded</strong>.  From the error message I learned about the <code>bundle exec</code> command.  This tries to run the specific versions of programs that are part of your application&#8217;s bundle.</p>
 
-<p>So, <code>bundle exec rake install</code>? Yep, that worked.  I thought I was golden until I tried to run <code>bundle exec rake generate</code> to "compile" the website.  I thought to myself "Am I going to need to run bundle exec every time?".  Something was silently failing to run.  The  "My Octopress Page is coming soon" <code>index.html</code> made by the <code>Rakefile</code> was still in the _deploy directory, and none of the templates had executed and produced any output files.  So I went digging on the <code>Rakefile</code>:</p>
+<p>So, <code>bundle exec rake install</code>? Yep, that worked.  I thought I was golden until I tried to run <code>bundle exec rake generate</code> to &#8220;compile&#8221; the website.  I thought to myself &#8220;Am I going to need to run bundle exec every time?&#8221;.  Something was silently failing to run.  The  &#8220;My Octopress Page is coming soon&#8221; <code>index.html</code> made by the <code>Rakefile</code> was still in the _deploy directory, and none of the templates had executed and produced any output files.  So I went digging on the <code>Rakefile</code>:</p>
 
 <p><code>ruby Octopress's Rakefile generate task
   puts "## Generating Site with Jekyll"
@@ -54,7 +53,7 @@ This was because I had a copy of <code>rake</code> from my system in <code>/bin/
   system "jekyll"
 </code></p>
 
-<p>It turns out, this system() call wasn't locating the <code>compass</code> script somewhere buried under <code>~/.gem/</code>.  When I tried to run <code>compass</code> on the command line straight up, I got <code>-bash: compass: command not found</code>.  <code>bundle exec compass</code> worked for me on the command line, and that's essentially what system() does.  It runs a shell to run the program.  I tried to hack the Rakefile to use <code>bundle exec</code> in the system() call, but [ <em>my memory is fuzzy here</em> ] things didn't work.  I ultimately resorted to uninstalling Ruby <em>entirely</em>, from RPM packages, and the Gems installed in the 3 locations above.  Then I went through a process of installing the core of Ruby from RPM, installing Gems as a user to get a list of Gem + version Octopress wanted, and then installed those explicitly as root with <code>gem</code> system-wide.</p>
+<p>It turns out, this system() call wasn&#8217;t locating the <code>compass</code> script somewhere buried under <code>~/.gem/</code>.  When I tried to run <code>compass</code> on the command line straight up, I got <code>-bash: compass: command not found</code>.  <code>bundle exec compass</code> worked for me on the command line, and that&#8217;s essentially what system() does.  It runs a shell to run the program.  I tried to hack the Rakefile to use <code>bundle exec</code> in the system() call, but [ <em>my memory is fuzzy here</em> ] things didn&#8217;t work.  I ultimately resorted to uninstalling Ruby <em>entirely</em>, from RPM packages, and the Gems installed in the 3 locations above.  Then I went through a process of installing the core of Ruby from RPM, installing Gems as a user to get a list of Gem + version Octopress wanted, and then installed those explicitly as root with <code>gem</code> system-wide.</p>
 
 <p><code>sh Installing version 0.12.1 of the json Gem
 % gem install jekyll -v 0.12.1
@@ -62,32 +61,27 @@ This was because I had a copy of <code>rake</code> from my system in <code>/bin/
 
 <p>At that point I got <code>compass</code> and <code>jekyll</code> in standard system paths (/bin, and /usr/local/bin).  So I tried to run <code>rake generate</code> again:</p>
 
-<p>``` sh Jekyll can't load json? dafuq?
-$ bundle exec rake generate</p>
-
-<h2>Generating Site with Jekyll</h2>
-
-<p>identical source/stylesheets/screen.css
+<p><code>sh Jekyll can't load json? dafuq?
+$ bundle exec rake generate
+## Generating Site with Jekyll
+identical source/stylesheets/screen.css 
 Configuration from /home/warewolf/git/octopress/_config.yml
-/home/warewolf/git/octopress/plugins/config_tag.rb:1:in `require': cannot load such file -- json (LoadError)</p>
+/home/warewolf/git/octopress/plugins/config_tag.rb:1:in `require': cannot load such file -- json (LoadError)
+        from /home/warewolf/git/octopress/plugins/config_tag.rb:1:in `&lt;top (required)&gt;'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:78:in `require'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:78:in `block (2 levels) in setup'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:77:in `each'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:77:in `block in setup'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:76:in `each'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:76:in `setup'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:31:in `initialize'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/bin/jekyll:238:in `new'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/bin/jekyll:238:in `&lt;top (required)&gt;'
+        from /usr/local/bin/jekyll:23:in `load'
+        from /usr/local/bin/jekyll:23:in `&lt;main&gt;'
+</code></p>
 
-<pre><code>    from /home/warewolf/git/octopress/plugins/config_tag.rb:1:in `&lt;top (required)&gt;'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:78:in `require'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:78:in `block (2 levels) in setup'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:77:in `each'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:77:in `block in setup'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:76:in `each'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:76:in `setup'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:31:in `initialize'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/bin/jekyll:238:in `new'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/bin/jekyll:238:in `&lt;top (required)&gt;'
-    from /usr/local/bin/jekyll:23:in `load'
-    from /usr/local/bin/jekyll:23:in `&lt;main&gt;'
-</code></pre>
-
-<p>```</p>
-
-<p>Uhh.  Excuse me?  Why can't you find json?</p>
+<p>Uhh.  Excuse me?  Why can&#8217;t you find json?</p>
 
 <p><code>sh But json is installed...
 $ gem list | grep json
@@ -98,26 +92,22 @@ $ ruby
 require 'json'
 puts "I guess I loaded json." &lt;Ctrl-D&gt;
 I guess I loaded json.
-$
+$ 
 </code></p>
 
-<p>No warnings.  Normal Ruby loads json.  So why can't jekyll when it's run by rake?  From the Rakefile above, we know that <code>rake</code> simply runs jekyll via system().  What happens when we run it standalone?</p>
+<p>No warnings.  Normal Ruby loads json.  So why can&#8217;t jekyll when it&#8217;s run by rake?  From the Rakefile above, we know that <code>rake</code> simply runs jekyll via system().  What happens when we run it standalone?</p>
 
-<p>``` sh Jekyll running like it should be.  The hell?</p>
-
-<h1>warewolf@xasf:~/git/octopress$ jekyll</h1>
-
-<p>Configuration from /home/warewolf/git/octopress/_config.yml
-Building site: source -> public
-Successfully generated site: source -> public</p>
-
-<h1>warewolf@xasf:~/git/octopress$</h1>
-
-<p>```</p>
+<p><code>sh Jekyll running like it should be.  The hell?
+# warewolf@xasf:~/git/octopress$ jekyll
+Configuration from /home/warewolf/git/octopress/_config.yml
+Building site: source -&gt; public
+Successfully generated site: source -&gt; public
+# warewolf@xasf:~/git/octopress$ 
+</code></p>
 
 <p>Ok, this shit is getting real.  <strong>SYSADMIN INVESTIGATION MODE ACTIVATE</strong></p>
 
-<p>I've got a few tricks up my sleeve, one of which I use for helping me secure automated batch processing through ssh pubkeys.  Note to self: <em>write this up later!</em></p>
+<p>I&#8217;ve got a few tricks up my sleeve, one of which I use for helping me secure automated batch processing through ssh pubkeys.  Note to self: <em>write this up later!</em></p>
 
 <p>Lets look at the execution environment of <code>compass</code> and <code>jekyll</code> when run via <code>rake generate</code>.  I do this by running the command through bash, but as a series of commands instead of just one.  I compared this to my normal shell environment and saw some things that were added.</p>
 
@@ -126,61 +116,54 @@ Successfully generated site: source -> public</p>
 </code></p>
 
 <p>And the output:
-``` sh</p>
-
-<h2>Generating Site with Jekyll</h2>
-
-<p>identical source/stylesheets/screen.css
+<code>sh
+## Generating Site with Jekyll
+identical source/stylesheets/screen.css 
 [.. cut for brevity..]
 BUNDLE_BIN_PATH=/usr/local/share/gems/gems/bundler-1.3.5/bin/bundle
 BUNDLE_GEMFILE=/home/warewolf/git/octopress/Gemfile
 GEM_HOME=/home/warewolf/.gem/ruby/1.9.1
 GEM_PATH=/home/warewolf/.gem/ruby/1.9.1:/usr/share/gems:/usr/local/share/gems
 RUBYOPT='-I/usr/local/share/gems/gems/bundler-1.3.5/lib -rbundler/setup'
-<em>ORIGINAL_GEM_PATH=/home/warewolf/.gem/ruby/1.9.1:/usr/share/gems:/usr/local/share/gems
+_ORIGINAL_GEM_PATH=/home/warewolf/.gem/ruby/1.9.1:/usr/share/gems:/usr/local/share/gems
 [..cut for brevity..]
-Configuration from /home/warewolf/git/octopress/</em>config.yml
-/home/warewolf/git/octopress/plugins/config_tag.rb:1:in `require': cannot load such file -- json (LoadError)</p>
+Configuration from /home/warewolf/git/octopress/_config.yml
+/home/warewolf/git/octopress/plugins/config_tag.rb:1:in `require': cannot load such file -- json (LoadError)
+        from /home/warewolf/git/octopress/plugins/config_tag.rb:1:in `&lt;top (required)&gt;'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:78:in `require'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:78:in `block (2 levels) in setup'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:77:in `each'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:77:in `block in setup'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:76:in `each'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:76:in `setup'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:31:in `initialize'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/bin/jekyll:238:in `new'
+        from /usr/local/share/gems/gems/jekyll-0.12.1/bin/jekyll:238:in `&lt;top (required)&gt;'
+        from /usr/local/bin/jekyll:23:in `load'
+        from /usr/local/bin/jekyll:23:in `&lt;main&gt;'
+</code></p>
 
-<pre><code>    from /home/warewolf/git/octopress/plugins/config_tag.rb:1:in `&lt;top (required)&gt;'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:78:in `require'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:78:in `block (2 levels) in setup'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:77:in `each'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:77:in `block in setup'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:76:in `each'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:76:in `setup'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:31:in `initialize'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/bin/jekyll:238:in `new'
-    from /usr/local/share/gems/gems/jekyll-0.12.1/bin/jekyll:238:in `&lt;top (required)&gt;'
-    from /usr/local/bin/jekyll:23:in `load'
-    from /usr/local/bin/jekyll:23:in `&lt;main&gt;'
-</code></pre>
-
-<p>```</p>
-
-<p>So what stands out here?  There's some environment variables that look like they're explicitly related to the path for Gems, <code>GEM_HOME</code>, <code>GEM_PATH</code>, and <code>RUBYOPT</code>.  Exactly the same way I printed out these environment variables, <em>I can unset them</em>.  So now in the <code>Rakefile</code> we have this:</p>
+<p>So what stands out here?  There&#8217;s some environment variables that look like they&#8217;re explicitly related to the path for Gems, <code>GEM_HOME</code>, <code>GEM_PATH</code>, and <code>RUBYOPT</code>.  Exactly the same way I printed out these environment variables, <em>I can unset them</em>.  So now in the <code>Rakefile</code> we have this:</p>
 
 <p>``` ruby Octopress Rakefile generate task un-setting environment variables
-  puts "## Generating Site with Jekyll"
-  system "compass compile --css-dir #{source_dir}/stylesheets"
-  system "bash -c 'unset GEM_HOME GEM_PATH RUBYOPT; jekyll'"</p>
+  puts &#8220;## Generating Site with Jekyll&#8221;
+  system &#8220;compass compile &#8211;css-dir #{source_dir}/stylesheets&#8221;
+  system &#8220;bash -c &#8216;unset GEM_HOME GEM_PATH RUBYOPT; jekyll&#8217;&#8221;</p>
 
 <p>```</p>
 
 <p>And now we have this:</p>
 
-<p>``` sh Jekyll works like a champ, just like under a regular shell
-$ bundle exec rake generate</p>
-
-<h2>Generating Site with Jekyll</h2>
-
-<p>identical source/stylesheets/screen.css
+<p><code>sh Jekyll works like a champ, just like under a regular shell
+$ bundle exec rake generate
+## Generating Site with Jekyll
+identical source/stylesheets/screen.css 
 Configuration from /home/warewolf/git/octopress/_config.yml
-Building site: source -> public
-Successfully generated site: source -> public
-```</p>
+Building site: source -&gt; public
+Successfully generated site: source -&gt; public
+</code></p>
 
-<p>So something that is setting those environment variables that is <em>supposed</em> to be helping is ending up hurting us.  I bet it's the bundle stuff.  I found this at the top of the <code>Rakefile</code>:</p>
+<p>So something that is setting those environment variables that is <em>supposed</em> to be helping is ending up hurting us.  I bet it&#8217;s the bundle stuff.  I found this at the top of the <code>Rakefile</code>:</p>
 
 <p><code>ruby Rakefile
 require "rubygems"
@@ -190,16 +173,14 @@ require "stringex"
 
 <p>So I commented out the <code>require "bundler/setup"</code> line and re-ran <code>rake generate</code>.  Now:</p>
 
-<p>``` sh Lets run rake generate again
-$ rake generate</p>
-
-<h2>Generating Site with Jekyll</h2>
-
-<p>identical source/stylesheets/screen.css
+<p><code>sh Lets run rake generate again
+$ rake generate
+## Generating Site with Jekyll
+identical source/stylesheets/screen.css 
 Configuration from /home/warewolf/git/octopress/_config.yml
-Building site: source -> public
-Successfully generated site: source -> public
-```</p>
+Building site: source -&gt; public
+Successfully generated site: source -&gt; public
+</code></p>
 
 <p>Viola!  And now I have a blog.</p>
 ]]></content>

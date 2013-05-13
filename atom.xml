@@ -4,7 +4,7 @@
   <title><![CDATA[Technical Generalism]]></title>
   <link href="http://warewolf.github.io/atom.xml" rel="self"/>
   <link href="http://warewolf.github.io/"/>
-  <updated>2013-05-06T08:17:30-04:00</updated>
+  <updated>2013-05-13T00:00:03-04:00</updated>
   <id>http://warewolf.github.io/</id>
   <author>
     <name><![CDATA[Richard Harman]]></name>
@@ -16,66 +16,63 @@
   <entry>
     <title type="html"><![CDATA[Nova Labs MAL100 classes: status]]></title>
     <link href="http://warewolf.github.io/blog/2013/05/04/nova-labs-mal100-classes-status/"/>
-    
-    <category scheme="http://warewolf.github.io/categories/" term="libvirt" />
-    
-    <category scheme="http://warewolf.github.io/categories/" term="malware" />
-    
-    <category scheme="http://warewolf.github.io/categories/" term="openvpn" />
-    
-    <category scheme="http://warewolf.github.io/categories/" term="perl" />
-    
     <updated>2013-05-04T00:29:00-04:00</updated>
     <id>http://warewolf.github.io/blog/2013/05/04/nova-labs-mal100-classes-status</id>
     <content type="html"><![CDATA[<p>The <a href="http://www.nova-labs.org">Nova Labs</a> MAL100 class in <a href="http://www.meetup.com/NOVA-Makers/events/107980132/">April</a> was a hit, and there&#8217;s one upcoming in  <a href="http://www.meetup.com/NOVA-Makers/events/115134982/">May</a> on the 15th that has already filled up all available slots.  That&#8217;s fantastic, but it&#8217;s going to take forever for me to <em>train</em> everybody if I&#8217;m doing it at 15 students at a time.  I&#8217;ve got some work to do for making things available to students whom are remote.<!-- more --></p>
 
-<h2>The issues at hand:</h2>
+<h2 id="the-issues-at-hand">The issues at hand:</h2>
 
 <ul>
-<li><p>All the student VMs are on the same virtual network.</p>
+  <li>
+    <p>All the student VMs are on the same virtual network. </p>
 
-<p>This allows network cross-contamination (one student can generate traffic another student will see), which will lead to confusion.  The VMs per student need to be segregated to their own virtual network.</p>
+    <p>This allows network cross-contamination (one student can generate traffic another student will see), which will lead to confusion.  The VMs per student need to be segregated to their own virtual network.  </p>
 
-<p>How to fix: <strong>Script up automation of creating new virtual bridges in libvirt.</strong></p></li>
-<li><p>There isn&#8217;t really any &#8220;network&#8221; access to the Windows VM.</p>
+    <p>How to fix: <strong>Script up automation of creating new virtual bridges in libvirt.</strong></p>
+  </li>
+  <li>
+    <p>There isn&#8217;t really any &#8220;network&#8221; access to the Windows VM.</p>
 
-<p>The MITM system is connected to the Nova Labs network, and the Windows VMs are connected to a &#8220;malware&#8221; virtual network that is also connected to the MITM system.  I think I&#8217;ll need more advanced connectivity for more complex lab exercises later.</p>
+    <p>The MITM system is connected to the Nova Labs network, and the Windows VMs are connected to a &#8220;malware&#8221; virtual network that is also connected to the MITM system.  I think I&#8217;ll need more advanced connectivity for more complex lab exercises later.</p>
 
-<p>How to fix: <strong>Make dedicated MITM VMs &amp; dedicated &#8220;malware&#8221; virtual networks per student.</strong></p></li>
-<li><p>I need a way to temporarially grant secure access to people remotely.</p>
+    <p>How to fix: <strong>Make dedicated MITM VMs &amp; dedicated &#8220;malware&#8221; virtual networks per student.</strong></p>
+  </li>
+  <li>
+    <p>I need a way to temporarially grant secure access to people remotely.</p>
 
-<p>I&#8217;m thinking <a href="http://www.openvpn.net">OpenVPN</a>.  It&#8217;s cross-platform, and I can use x509 certificates that I generate using <a href="http://www.sm-zone.net/">TinyCA2</a>.  I&#8217;ll do certificate revocation status checking as described by <a href="http://isrlabs.net/wordpress/?p=169">this guy here</a>.</p>
+    <p>I&#8217;m thinking <a href="http://www.openvpn.net">OpenVPN</a>.  It&#8217;s cross-platform, and I can use x509 certificates that I generate using <a href="http://www.sm-zone.net/">TinyCA2</a>.  I&#8217;ll do certificate revocation status checking as described by <a href="http://isrlabs.net/wordpress/?p=169">this guy here</a>.</p>
 
-<p>How to fix: <strong>Set up a Certificate Authority for the lab, and get OpenVPN running.</strong></p></li>
-<li><p>Segregate remote students from each other so they can&#8217;t attack each other.
+    <p>How to fix: <strong>Set up a Certificate Authority for the lab, and get OpenVPN running.</strong></p>
+  </li>
+  <li>
+    <p>Segregate remote students from each other so they can&#8217;t attack each other.
 I think I can handle this with scripts in OpenVPN, and some <a href="https://www.google.com/search?q=libvirt+network+filters">network filters in libvirt</a>.  I need to &#8220;link&#8221; an OpenVPN connection to a libvirt virtual network so that one student can&#8217;t touch another student&#8217;s network.</p>
 
-<p>How to fix: <strong>Research OpenVPN scripting and libvirt network filters.</strong></p></li>
-<li><p>I&#8217;m concerned about our internet connection bandwidth at the space.</p>
+    <p>How to fix: <strong>Research OpenVPN scripting and libvirt network filters.</strong></p>
+  </li>
+  <li>
+    <p>I&#8217;m concerned about our internet connection bandwidth at the space.</p>
 
-<p> I&#8217;m sharing out two VNC screens per analyst.  The Instructor VM 15 times over, and one dedicated screen per student.  <strong>That&#8217;s a total of 30 concurrent VNC sessions.</strong>  That&#8217;s a lot of bandwidth if all 15 students are remote.  I&#8217;m considering buying a <a href="http://www.linode.com/?r=8304c52b0c2b67372d5dcbe998ee4e04271275d6">Linode</a> for just the bandwidth so I can send one VNC stream of the Instructor VM from the space to the Linode, and then have the Linode &#8220;broadcast&#8221; that to the remote students.  The dedicated student VM VNC sessions would still be sent directly from the space to the remote students.</p>
+    <p>I&#8217;m sharing out two VNC screens per analyst.  The Instructor VM 15 times over, and one dedicated screen per student.  <strong>That&#8217;s a total of 30 concurrent VNC sessions.</strong>  That&#8217;s a lot of bandwidth if all 15 students are remote.  I&#8217;m considering buying a <a href="http://www.linode.com/?r=8304c52b0c2b67372d5dcbe998ee4e04271275d6">Linode</a> for just the bandwidth so I can send one VNC stream of the Instructor VM from the space to the Linode, and then have the Linode &#8220;broadcast&#8221; that to the remote students.  The dedicated student VM VNC sessions would still be sent directly from the space to the remote students.</p>
 
-<p>How to fix: <strong>Buy a linode and limit the number of remote students.</strong></p></li>
-<li><p>Work out the kinks in streaming.</p>
+    <p>How to fix: <strong>Buy a linode and limit the number of remote students.</strong></p>
+  </li>
+  <li>
+    <p>Work out the kinks in streaming.</p>
 
-<p>I heard someone say that the best setup for streaming is just the instructor audio, and then a stream of the slide deck.  E.g., don&#8217;t bother with putting a talking head on screen.  I think I like that idea, and I think that makes things easier for <a href="http://www.ustream.tv/channel/nova-labs-class-room">UStream</a>.</p>
+    <p>I heard someone say that the best setup for streaming is just the instructor audio, and then a stream of the slide deck.  E.g., don&#8217;t bother with putting a talking head on screen.  I think I like that idea, and I think that makes things easier for <a href="http://www.ustream.tv/channel/nova-labs-class-room">UStream</a>.</p>
 
-<p>The audio in the first class wasn&#8217;t that great because I wasn&#8217;t mic&#8217;d directly.  There was a lot of ambient audio in the background.  I think I need to bring either a bluetooth hands-free headset, or bring my <a href="http://www.amazon.com/PlayStation-2-USB-Headset/dp/B00009YEK5">Playstation USB headset</a>.</p>
+    <p>The audio in the first class wasn&#8217;t that great because I wasn&#8217;t mic&#8217;d directly.  There was a lot of ambient audio in the background.  I think I need to bring either a bluetooth hands-free headset, or bring my <a href="http://www.amazon.com/PlayStation-2-USB-Headset/dp/B00009YEK5">Playstation USB headset</a>.</p>
 
-<p>The video cut out on the stream a couple of times - I&#8217;m not sure what caused that :(</p></li>
+    <p>The video cut out on the stream a couple of times - I&#8217;m not sure what caused that :(</p>
+  </li>
 </ul>
-
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[Adventures in Ruby]]></title>
     <link href="http://warewolf.github.io/blog/2013/04/28/adventures-in-ruby/"/>
-    
-    <category scheme="http://warewolf.github.io/categories/" term="octopress" />
-    
-    <category scheme="http://warewolf.github.io/categories/" term="ruby" />
-    
     <updated>2013-04-28T15:44:00-04:00</updated>
     <id>http://warewolf.github.io/blog/2013/04/28/adventures-in-ruby</id>
     <content type="html"><![CDATA[<p>After reading a <a href="http://isrlabs.net/wordpress/?p=169">a blog post on exactly what I needed</a> for students to remotely access the virtual machines in the <a href="http://www.nova-labs.org/">Nova Labs</a> classes, I decided I needed to give back to the community just a bit more.  Because I like github, and because I&#8217;ve used github-pages before, I decided on <a href="http://octopress.org/">Octopress</a>.  I&#8217;d soon find out this wouldn&#8217;t be as simple as setting up github-pages for my <a href="http://warewolf.github.com/thin-provisioning/">thin-provisioning</a> site, which oddly enough appears to be returning a 404 as I compose this post. <em>Sigh</em>.</p>
@@ -91,121 +88,112 @@ I think I can handle this with scripts in OpenVPN, and some <a href="https://www
 <p>You&#8217;re supposed to run <code>bundle install</code> to install Octopress&#8217;s pre-requisites (including a specific version of the Ruby interpreter itself), which will end up in <code>~/.gem</code>.  Bundle&#8217;s job is to make setting up an application <em>repeatable</em>, but I was unwittingly playing mix-master with <em>multiple versions</em> of gems and <em>multiple locations</em> Ruby gems could be installed on the file-system.</p>
 
 <ul>
-<li>/usr/share/gems <code>&lt;-- where RPM packages put gems</code></li>
-<li>/usr/local/share/gems <code>&lt;-- where gem(1) puts gems</code></li>
-<li>~/.gem/ruby/1.9.1/gems <code>&lt;-- where bundle puts gems</code></li>
+  <li>/usr/share/gems <code>&lt;-- where RPM packages put gems</code></li>
+  <li>/usr/local/share/gems <code>&lt;-- where gem(1) puts gems</code></li>
+  <li>~/.gem/ruby/1.9.1/gems <code>&lt;-- where bundle puts gems</code></li>
 </ul>
 
-
-<p>The first thing that went wrong was running Ruby&#8217;s version of <code>make</code>, <code>rake</code> as part of <a href="http://octopress.org/docs/setup/">installing the default Octopress theme</a>.  Rake informed me that I was running too new of a version of rake:</p>
-
-<figure class='code'><figcaption><span>Installing the Octopress theme</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>rake install
-</span><span class='line'>rake aborted!
-</span><span class='line'>You have already activated rake 0.9.6, but your Gemfile requires rake 0.9.2.2.
-</span><span class='line'>Using bundle <span class="nb">exec </span>may solve this.
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This was because I had a copy of <code>rake</code> from my system in <code>/bin/rake</code>, and a copy from <code>bundle</code> in <code>~/.gem</code> somewhere.  <strong>I wasn&#8217;t using the version of <code>rake</code> specified by the <code>Gemfile.lock</code> that <code>bundle</code> downloaded</strong>.  From the error message I learned about the <code>bundle exec</code> command.  This tries to run the specific versions of programs that are part of your application&#8217;s bundle.</p>
+<p>The first thing that went wrong was running Ruby&#8217;s version of <code>make</code>, <code>rake</code> as part of <a href="http://octopress.org/docs/setup/">installing the default Octopress theme</a>.  Rake informed me that I was running too new of a version of rake:
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span>Installing the Octopress theme</span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line"><span class="nv">$ </span>rake install
+</span><span class="line">rake aborted!
+</span><span class="line">You have already activated rake 0.9.6, but your Gemfile requires rake 0.9.2.2.
+</span><span class="line">Using bundle <span class="nb">exec </span>may solve this.
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+This was because I had a copy of <code>rake</code> from my system in <code>/bin/rake</code>, and a copy from <code>bundle</code> in <code>~/.gem</code> somewhere.  <strong>I wasn&#8217;t using the version of <code>rake</code> specified by the <code>Gemfile.lock</code> that <code>bundle</code> downloaded</strong>.  From the error message I learned about the <code>bundle exec</code> command.  This tries to run the specific versions of programs that are part of your application&#8217;s bundle.</p>
 
 <p>So, <code>bundle exec rake install</code>? Yep, that worked.  I thought I was golden until I tried to run <code>bundle exec rake generate</code> to &#8220;compile&#8221; the website.  I thought to myself &#8220;Am I going to need to run bundle exec every time?&#8221;.  Something was silently failing to run.  The  &#8220;My Octopress Page is coming soon&#8221; <code>index.html</code> made by the <code>Rakefile</code> was still in the _deploy directory, and none of the templates had executed and produced any output files.  So I went digging on the <code>Rakefile</code>:</p>
 
-<figure class='code'><figcaption><span>Octopress&#8217;s Rakefile generate task</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="nb">puts</span> <span class="s2">&quot;## Generating Site with Jekyll&quot;</span>
-</span><span class='line'>  <span class="nb">system</span> <span class="s2">&quot;compass compile --css-dir </span><span class="si">#{</span><span class="n">source_dir</span><span class="si">}</span><span class="s2">/stylesheets&quot;</span>
-</span><span class='line'>  <span class="nb">system</span> <span class="s2">&quot;jekyll&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Octopress&#8217;s Rakefile generate task</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line">  <span class="nb">puts</span> <span class="s2">&quot;## Generating Site with Jekyll&quot;</span>
+</span><span class="line">  <span class="nb">system</span> <span class="s2">&quot;compass compile --css-dir </span><span class="si">#{</span><span class="n">source_dir</span><span class="si">}</span><span class="s2">/stylesheets&quot;</span>
+</span><span class="line">  <span class="nb">system</span> <span class="s2">&quot;jekyll&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>It turns out, this system() call wasn&#8217;t locating the <code>compass</code> script somewhere buried under <code>~/.gem/</code>.  When I tried to run <code>compass</code> on the command line straight up, I got <code>-bash: compass: command not found</code>.  <code>bundle exec compass</code> worked for me on the command line, and that&#8217;s essentially what system() does.  It runs a shell to run the program.  I tried to hack the Rakefile to use <code>bundle exec</code> in the system() call, but [ <em>my memory is fuzzy here</em> ] things didn&#8217;t work.  I ultimately resorted to uninstalling Ruby <em>entirely</em>, from RPM packages, and the Gems installed in the 3 locations above.  Then I went through a process of installing the core of Ruby from RPM, installing Gems as a user to get a list of Gem + version Octopress wanted, and then installed those explicitly as root with <code>gem</code> system-wide.</p>
 
-<figure class='code'><figcaption><span>Installing version 0.12.1 of the json Gem</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>% gem install jekyll -v 0.12.1
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Installing version 0.12.1 of the json Gem</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">% gem install jekyll -v 0.12.1
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>At that point I got <code>compass</code> and <code>jekyll</code> in standard system paths (/bin, and /usr/local/bin).  So I tried to run <code>rake generate</code> again:</p>
 
-<figure class='code'><figcaption><span>Jekyll can&#8217;t load json? dafuq?</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>bundle <span class="nb">exec </span>rake generate
-</span><span class='line'><span class="c">## Generating Site with Jekyll</span>
-</span><span class='line'>identical <span class="nb">source</span>/stylesheets/screen.css
-</span><span class='line'>Configuration from /home/warewolf/git/octopress/_config.yml
-</span><span class='line'>/home/warewolf/git/octopress/plugins/config_tag.rb:1:in <span class="sb">`</span>require<span class="s1">&#39;: cannot load such file -- json (LoadError)</span>
-</span><span class='line'><span class="s1">        from /home/warewolf/git/octopress/plugins/config_tag.rb:1:in `&lt;top (required)&gt;&#39;</span>
-</span><span class='line'>        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:78:in <span class="sb">`</span>require<span class="s1">&#39;</span>
-</span><span class='line'><span class="s1">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:78:in `block (2 levels) in setup&#39;</span>
-</span><span class='line'>        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:77:in <span class="sb">`</span>each<span class="s1">&#39;</span>
-</span><span class='line'><span class="s1">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:77:in `block in setup&#39;</span>
-</span><span class='line'>        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:76:in <span class="sb">`</span>each<span class="s1">&#39;</span>
-</span><span class='line'><span class="s1">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:76:in `setup&#39;</span>
-</span><span class='line'>        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:31:in <span class="sb">`</span>initialize<span class="s1">&#39;</span>
-</span><span class='line'><span class="s1">        from /usr/local/share/gems/gems/jekyll-0.12.1/bin/jekyll:238:in `new&#39;</span>
-</span><span class='line'>        from /usr/local/share/gems/gems/jekyll-0.12.1/bin/jekyll:238:in <span class="sb">`</span>&lt;top <span class="o">(</span>required<span class="o">)</span>&gt;<span class="s1">&#39;</span>
-</span><span class='line'><span class="s1">        from /usr/local/bin/jekyll:23:in `load&#39;</span>
-</span><span class='line'>        from /usr/local/bin/jekyll:23:in <span class="sb">`</span>&lt;main&gt;<span class="err">&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Jekyll can&#8217;t load json? dafuq?</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>bundle <span class="nb">exec </span>rake generate
+</span><span class="line"><span class="c">## Generating Site with Jekyll</span>
+</span><span class="line">identical <span class="nb">source</span>/stylesheets/screen.css
+</span><span class="line">Configuration from /home/warewolf/git/octopress/_config.yml
+</span><span class="line">/home/warewolf/git/octopress/plugins/config_tag.rb:1:in <span class="sb">`</span>require<span class="s1">&#39;: cannot load such file -- json (LoadError)</span>
+</span><span class="line"><span class="s1">        from /home/warewolf/git/octopress/plugins/config_tag.rb:1:in `&lt;top (required)&gt;&#39;</span>
+</span><span class="line">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:78:in <span class="sb">`</span>require<span class="s1">&#39;</span>
+</span><span class="line"><span class="s1">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:78:in `block (2 levels) in setup&#39;</span>
+</span><span class="line">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:77:in <span class="sb">`</span>each<span class="s1">&#39;</span>
+</span><span class="line"><span class="s1">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:77:in `block in setup&#39;</span>
+</span><span class="line">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:76:in <span class="sb">`</span>each<span class="s1">&#39;</span>
+</span><span class="line"><span class="s1">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:76:in `setup&#39;</span>
+</span><span class="line">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:31:in <span class="sb">`</span>initialize<span class="s1">&#39;</span>
+</span><span class="line"><span class="s1">        from /usr/local/share/gems/gems/jekyll-0.12.1/bin/jekyll:238:in `new&#39;</span>
+</span><span class="line">        from /usr/local/share/gems/gems/jekyll-0.12.1/bin/jekyll:238:in <span class="sb">`</span>&lt;top <span class="o">(</span>required<span class="o">)</span>&gt;<span class="s1">&#39;</span>
+</span><span class="line"><span class="s1">        from /usr/local/bin/jekyll:23:in `load&#39;</span>
+</span><span class="line">        from /usr/local/bin/jekyll:23:in <span class="sb">`</span>&lt;main&gt;<span class="err">&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Uhh.  Excuse me?  Why can&#8217;t you find json?</p>
 
-<figure class='code'><figcaption><span>But json is installed&#8230;</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>gem list | grep json
-</span><span class='line'>json <span class="o">(</span>1.7.7<span class="o">)</span>
-</span><span class='line'><span class="nv">$ </span>bundle check
-</span><span class='line'>The Gemfile<span class="s1">&#39;s dependencies are satisfied</span>
-</span><span class='line'><span class="s1">$ ruby</span>
-</span><span class='line'><span class="s1">require &#39;</span>json<span class="err">&#39;</span>
-</span><span class='line'>puts <span class="s2">&quot;I guess I loaded json.&quot;</span> &lt;Ctrl-D&gt;
-</span><span class='line'>I guess I loaded json.
-</span><span class='line'><span class="nv">$ </span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>But json is installed&#8230;</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>gem list | grep json
+</span><span class="line">json <span class="o">(</span>1.7.7<span class="o">)</span>
+</span><span class="line"><span class="nv">$ </span>bundle check
+</span><span class="line">The Gemfile<span class="s1">&#39;s dependencies are satisfied</span>
+</span><span class="line"><span class="s1">$ ruby</span>
+</span><span class="line"><span class="s1">require &#39;</span>json<span class="err">&#39;</span>
+</span><span class="line">puts <span class="s2">&quot;I guess I loaded json.&quot;</span> &lt;Ctrl-D&gt;
+</span><span class="line">I guess I loaded json.
+</span><span class="line"><span class="nv">$ </span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>No warnings.  Normal Ruby loads json.  So why can&#8217;t jekyll when it&#8217;s run by rake?  From the Rakefile above, we know that <code>rake</code> simply runs jekyll via system().  What happens when we run it standalone?</p>
 
-<figure class='code'><figcaption><span>Jekyll running like it should be.  The hell?</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># warewolf@xasf:~/git/octopress$ jekyll</span>
-</span><span class='line'>Configuration from /home/warewolf/git/octopress/_config.yml
-</span><span class='line'>Building site: <span class="nb">source</span> -&gt; public
-</span><span class='line'>Successfully generated site: <span class="nb">source</span> -&gt; public
-</span><span class='line'><span class="c"># warewolf@xasf:~/git/octopress$ </span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Jekyll running like it should be.  The hell?</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="c"># warewolf@xasf:~/git/octopress$ jekyll</span>
+</span><span class="line">Configuration from /home/warewolf/git/octopress/_config.yml
+</span><span class="line">Building site: <span class="nb">source</span> -&gt; public
+</span><span class="line">Successfully generated site: <span class="nb">source</span> -&gt; public
+</span><span class="line"><span class="c"># warewolf@xasf:~/git/octopress$ </span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Ok, this shit is getting real.  <strong>SYSADMIN INVESTIGATION MODE ACTIVATE</strong></p>
 
@@ -213,119 +201,112 @@ I think I can handle this with scripts in OpenVPN, and some <a href="https://www
 
 <p>Lets look at the execution environment of <code>compass</code> and <code>jekyll</code> when run via <code>rake generate</code>.  I do this by running the command through bash, but as a series of commands instead of just one.  I compared this to my normal shell environment and saw some things that were added.</p>
 
-<figure class='code'><figcaption><span>bash -c ftw</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="nb">system</span> <span class="s2">&quot;bash -c &#39;set; jekyll&#39;&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>bash -c ftw</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line">  <span class="nb">system</span> <span class="s2">&quot;bash -c &#39;set; jekyll&#39;&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<p>And the output:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">## Generating Site with Jekyll</span>
-</span><span class='line'>identical <span class="nb">source</span>/stylesheets/screen.css
-</span><span class='line'><span class="o">[</span>.. cut <span class="k">for </span>brevity..<span class="o">]</span>
-</span><span class='line'><span class="nv">BUNDLE_BIN_PATH</span><span class="o">=</span>/usr/local/share/gems/gems/bundler-1.3.5/bin/bundle
-</span><span class='line'><span class="nv">BUNDLE_GEMFILE</span><span class="o">=</span>/home/warewolf/git/octopress/Gemfile
-</span><span class='line'><span class="nv">GEM_HOME</span><span class="o">=</span>/home/warewolf/.gem/ruby/1.9.1
-</span><span class='line'><span class="nv">GEM_PATH</span><span class="o">=</span>/home/warewolf/.gem/ruby/1.9.1:/usr/share/gems:/usr/local/share/gems
-</span><span class='line'><span class="nv">RUBYOPT</span><span class="o">=</span><span class="s1">&#39;-I/usr/local/share/gems/gems/bundler-1.3.5/lib -rbundler/setup&#39;</span>
-</span><span class='line'><span class="nv">_ORIGINAL_GEM_PATH</span><span class="o">=</span>/home/warewolf/.gem/ruby/1.9.1:/usr/share/gems:/usr/local/share/gems
-</span><span class='line'><span class="o">[</span>..cut <span class="k">for </span>brevity..<span class="o">]</span>
-</span><span class='line'>Configuration from /home/warewolf/git/octopress/_config.yml
-</span><span class='line'>/home/warewolf/git/octopress/plugins/config_tag.rb:1:in <span class="sb">`</span>require<span class="s1">&#39;: cannot load such file -- json (LoadError)</span>
-</span><span class='line'><span class="s1">        from /home/warewolf/git/octopress/plugins/config_tag.rb:1:in `&lt;top (required)&gt;&#39;</span>
-</span><span class='line'>        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:78:in <span class="sb">`</span>require<span class="s1">&#39;</span>
-</span><span class='line'><span class="s1">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:78:in `block (2 levels) in setup&#39;</span>
-</span><span class='line'>        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:77:in <span class="sb">`</span>each<span class="s1">&#39;</span>
-</span><span class='line'><span class="s1">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:77:in `block in setup&#39;</span>
-</span><span class='line'>        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:76:in <span class="sb">`</span>each<span class="s1">&#39;</span>
-</span><span class='line'><span class="s1">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:76:in `setup&#39;</span>
-</span><span class='line'>        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:31:in <span class="sb">`</span>initialize<span class="s1">&#39;</span>
-</span><span class='line'><span class="s1">        from /usr/local/share/gems/gems/jekyll-0.12.1/bin/jekyll:238:in `new&#39;</span>
-</span><span class='line'>        from /usr/local/share/gems/gems/jekyll-0.12.1/bin/jekyll:238:in <span class="sb">`</span>&lt;top <span class="o">(</span>required<span class="o">)</span>&gt;<span class="s1">&#39;</span>
-</span><span class='line'><span class="s1">        from /usr/local/bin/jekyll:23:in `load&#39;</span>
-</span><span class='line'>        from /usr/local/bin/jekyll:23:in <span class="sb">`</span>&lt;main&gt;<span class="err">&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<p>And the output:
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line"><span class="c">## Generating Site with Jekyll</span>
+</span><span class="line">identical <span class="nb">source</span>/stylesheets/screen.css
+</span><span class="line"><span class="o">[</span>.. cut <span class="k">for </span>brevity..<span class="o">]</span>
+</span><span class="line"><span class="nv">BUNDLE_BIN_PATH</span><span class="o">=</span>/usr/local/share/gems/gems/bundler-1.3.5/bin/bundle
+</span><span class="line"><span class="nv">BUNDLE_GEMFILE</span><span class="o">=</span>/home/warewolf/git/octopress/Gemfile
+</span><span class="line"><span class="nv">GEM_HOME</span><span class="o">=</span>/home/warewolf/.gem/ruby/1.9.1
+</span><span class="line"><span class="nv">GEM_PATH</span><span class="o">=</span>/home/warewolf/.gem/ruby/1.9.1:/usr/share/gems:/usr/local/share/gems
+</span><span class="line"><span class="nv">RUBYOPT</span><span class="o">=</span><span class="s1">&#39;-I/usr/local/share/gems/gems/bundler-1.3.5/lib -rbundler/setup&#39;</span>
+</span><span class="line"><span class="nv">_ORIGINAL_GEM_PATH</span><span class="o">=</span>/home/warewolf/.gem/ruby/1.9.1:/usr/share/gems:/usr/local/share/gems
+</span><span class="line"><span class="o">[</span>..cut <span class="k">for </span>brevity..<span class="o">]</span>
+</span><span class="line">Configuration from /home/warewolf/git/octopress/_config.yml
+</span><span class="line">/home/warewolf/git/octopress/plugins/config_tag.rb:1:in <span class="sb">`</span>require<span class="s1">&#39;: cannot load such file -- json (LoadError)</span>
+</span><span class="line"><span class="s1">        from /home/warewolf/git/octopress/plugins/config_tag.rb:1:in `&lt;top (required)&gt;&#39;</span>
+</span><span class="line">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:78:in <span class="sb">`</span>require<span class="s1">&#39;</span>
+</span><span class="line"><span class="s1">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:78:in `block (2 levels) in setup&#39;</span>
+</span><span class="line">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:77:in <span class="sb">`</span>each<span class="s1">&#39;</span>
+</span><span class="line"><span class="s1">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:77:in `block in setup&#39;</span>
+</span><span class="line">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:76:in <span class="sb">`</span>each<span class="s1">&#39;</span>
+</span><span class="line"><span class="s1">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:76:in `setup&#39;</span>
+</span><span class="line">        from /usr/local/share/gems/gems/jekyll-0.12.1/lib/jekyll/site.rb:31:in <span class="sb">`</span>initialize<span class="s1">&#39;</span>
+</span><span class="line"><span class="s1">        from /usr/local/share/gems/gems/jekyll-0.12.1/bin/jekyll:238:in `new&#39;</span>
+</span><span class="line">        from /usr/local/share/gems/gems/jekyll-0.12.1/bin/jekyll:238:in <span class="sb">`</span>&lt;top <span class="o">(</span>required<span class="o">)</span>&gt;<span class="s1">&#39;</span>
+</span><span class="line"><span class="s1">        from /usr/local/bin/jekyll:23:in `load&#39;</span>
+</span><span class="line">        from /usr/local/bin/jekyll:23:in <span class="sb">`</span>&lt;main&gt;<span class="err">&#39;</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
 <p>So what stands out here?  There&#8217;s some environment variables that look like they&#8217;re explicitly related to the path for Gems, <code>GEM_HOME</code>, <code>GEM_PATH</code>, and <code>RUBYOPT</code>.  Exactly the same way I printed out these environment variables, <em>I can unset them</em>.  So now in the <code>Rakefile</code> we have this:</p>
 
-<figure class='code'><figcaption><span>Octopress Rakefile generate task un-setting environment variables</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="nb">puts</span> <span class="s2">&quot;## Generating Site with Jekyll&quot;</span>
-</span><span class='line'>  <span class="nb">system</span> <span class="s2">&quot;compass compile --css-dir </span><span class="si">#{</span><span class="n">source_dir</span><span class="si">}</span><span class="s2">/stylesheets&quot;</span>
-</span><span class='line'>  <span class="nb">system</span> <span class="s2">&quot;bash -c &#39;unset GEM_HOME GEM_PATH RUBYOPT; jekyll&#39;&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Octopress Rakefile generate task un-setting environment variables</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line">  <span class="nb">puts</span> <span class="s2">&quot;## Generating Site with Jekyll&quot;</span>
+</span><span class="line">  <span class="nb">system</span> <span class="s2">&quot;compass compile --css-dir </span><span class="si">#{</span><span class="n">source_dir</span><span class="si">}</span><span class="s2">/stylesheets&quot;</span>
+</span><span class="line">  <span class="nb">system</span> <span class="s2">&quot;bash -c &#39;unset GEM_HOME GEM_PATH RUBYOPT; jekyll&#39;&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>And now we have this:</p>
 
-<figure class='code'><figcaption><span>Jekyll works like a champ, just like under a regular shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>bundle <span class="nb">exec </span>rake generate
-</span><span class='line'><span class="c">## Generating Site with Jekyll</span>
-</span><span class='line'>identical <span class="nb">source</span>/stylesheets/screen.css
-</span><span class='line'>Configuration from /home/warewolf/git/octopress/_config.yml
-</span><span class='line'>Building site: <span class="nb">source</span> -&gt; public
-</span><span class='line'>Successfully generated site: <span class="nb">source</span> -&gt; public
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Jekyll works like a champ, just like under a regular shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>bundle <span class="nb">exec </span>rake generate
+</span><span class="line"><span class="c">## Generating Site with Jekyll</span>
+</span><span class="line">identical <span class="nb">source</span>/stylesheets/screen.css
+</span><span class="line">Configuration from /home/warewolf/git/octopress/_config.yml
+</span><span class="line">Building site: <span class="nb">source</span> -&gt; public
+</span><span class="line">Successfully generated site: <span class="nb">source</span> -&gt; public
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>So something that is setting those environment variables that is <em>supposed</em> to be helping is ending up hurting us.  I bet it&#8217;s the bundle stuff.  I found this at the top of the <code>Rakefile</code>:</p>
 
-<figure class='code'><figcaption><span>Rakefile</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s2">&quot;rubygems&quot;</span>
-</span><span class='line'><span class="nb">require</span> <span class="s2">&quot;bundler/setup&quot;</span>
-</span><span class='line'><span class="nb">require</span> <span class="s2">&quot;stringex&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Rakefile</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s2">&quot;rubygems&quot;</span>
+</span><span class="line"><span class="nb">require</span> <span class="s2">&quot;bundler/setup&quot;</span>
+</span><span class="line"><span class="nb">require</span> <span class="s2">&quot;stringex&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>So I commented out the <code>require "bundler/setup"</code> line and re-ran <code>rake generate</code>.  Now:</p>
 
-<figure class='code'><figcaption><span>Lets run rake generate again</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>rake generate
-</span><span class='line'><span class="c">## Generating Site with Jekyll</span>
-</span><span class='line'>identical <span class="nb">source</span>/stylesheets/screen.css
-</span><span class='line'>Configuration from /home/warewolf/git/octopress/_config.yml
-</span><span class='line'>Building site: <span class="nb">source</span> -&gt; public
-</span><span class='line'>Successfully generated site: <span class="nb">source</span> -&gt; public
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Lets run rake generate again</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>rake generate
+</span><span class="line"><span class="c">## Generating Site with Jekyll</span>
+</span><span class="line">identical <span class="nb">source</span>/stylesheets/screen.css
+</span><span class="line">Configuration from /home/warewolf/git/octopress/_config.yml
+</span><span class="line">Building site: <span class="nb">source</span> -&gt; public
+</span><span class="line">Successfully generated site: <span class="nb">source</span> -&gt; public
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Viola!  And now I have a blog.</p>
 ]]></content>

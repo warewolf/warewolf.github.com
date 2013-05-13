@@ -93,42 +93,53 @@
 
 <div class="entry-content"><p>The <a href="http://www.nova-labs.org">Nova Labs</a> MAL100 class in <a href="http://www.meetup.com/NOVA-Makers/events/107980132/">April</a> was a hit, and there&#8217;s one upcoming in  <a href="http://www.meetup.com/NOVA-Makers/events/115134982/">May</a> on the 15th that has already filled up all available slots.  That&#8217;s fantastic, but it&#8217;s going to take forever for me to <em>train</em> everybody if I&#8217;m doing it at 15 students at a time.  I&#8217;ve got some work to do for making things available to students whom are remote.<!-- more --></p>
 
-<h2>The issues at hand:</h2>
+<h2 id="the-issues-at-hand">The issues at hand:</h2>
 
 <ul>
-<li><p>All the student VMs are on the same virtual network.</p>
+  <li>
+    <p>All the student VMs are on the same virtual network. </p>
 
-<p>This allows network cross-contamination (one student can generate traffic another student will see), which will lead to confusion.  The VMs per student need to be segregated to their own virtual network.</p>
+    <p>This allows network cross-contamination (one student can generate traffic another student will see), which will lead to confusion.  The VMs per student need to be segregated to their own virtual network.  </p>
 
-<p>How to fix: <strong>Script up automation of creating new virtual bridges in libvirt.</strong></p></li>
-<li><p>There isn&#8217;t really any &#8220;network&#8221; access to the Windows VM.</p>
+    <p>How to fix: <strong>Script up automation of creating new virtual bridges in libvirt.</strong></p>
+  </li>
+  <li>
+    <p>There isn&#8217;t really any &#8220;network&#8221; access to the Windows VM.</p>
 
-<p>The MITM system is connected to the Nova Labs network, and the Windows VMs are connected to a &#8220;malware&#8221; virtual network that is also connected to the MITM system.  I think I&#8217;ll need more advanced connectivity for more complex lab exercises later.</p>
+    <p>The MITM system is connected to the Nova Labs network, and the Windows VMs are connected to a &#8220;malware&#8221; virtual network that is also connected to the MITM system.  I think I&#8217;ll need more advanced connectivity for more complex lab exercises later.</p>
 
-<p>How to fix: <strong>Make dedicated MITM VMs &amp; dedicated &#8220;malware&#8221; virtual networks per student.</strong></p></li>
-<li><p>I need a way to temporarially grant secure access to people remotely.</p>
+    <p>How to fix: <strong>Make dedicated MITM VMs &amp; dedicated &#8220;malware&#8221; virtual networks per student.</strong></p>
+  </li>
+  <li>
+    <p>I need a way to temporarially grant secure access to people remotely.</p>
 
-<p>I&#8217;m thinking <a href="http://www.openvpn.net">OpenVPN</a>.  It&#8217;s cross-platform, and I can use x509 certificates that I generate using <a href="http://www.sm-zone.net/">TinyCA2</a>.  I&#8217;ll do certificate revocation status checking as described by <a href="http://isrlabs.net/wordpress/?p=169">this guy here</a>.</p>
+    <p>I&#8217;m thinking <a href="http://www.openvpn.net">OpenVPN</a>.  It&#8217;s cross-platform, and I can use x509 certificates that I generate using <a href="http://www.sm-zone.net/">TinyCA2</a>.  I&#8217;ll do certificate revocation status checking as described by <a href="http://isrlabs.net/wordpress/?p=169">this guy here</a>.</p>
 
-<p>How to fix: <strong>Set up a Certificate Authority for the lab, and get OpenVPN running.</strong></p></li>
-<li><p>Segregate remote students from each other so they can&#8217;t attack each other.
+    <p>How to fix: <strong>Set up a Certificate Authority for the lab, and get OpenVPN running.</strong></p>
+  </li>
+  <li>
+    <p>Segregate remote students from each other so they can&#8217;t attack each other.
 I think I can handle this with scripts in OpenVPN, and some <a href="https://www.google.com/search?q=libvirt+network+filters">network filters in libvirt</a>.  I need to &#8220;link&#8221; an OpenVPN connection to a libvirt virtual network so that one student can&#8217;t touch another student&#8217;s network.</p>
 
-<p>How to fix: <strong>Research OpenVPN scripting and libvirt network filters.</strong></p></li>
-<li><p>I&#8217;m concerned about our internet connection bandwidth at the space.</p>
+    <p>How to fix: <strong>Research OpenVPN scripting and libvirt network filters.</strong></p>
+  </li>
+  <li>
+    <p>I&#8217;m concerned about our internet connection bandwidth at the space.</p>
 
-<p> I&#8217;m sharing out two VNC screens per analyst.  The Instructor VM 15 times over, and one dedicated screen per student.  <strong>That&#8217;s a total of 30 concurrent VNC sessions.</strong>  That&#8217;s a lot of bandwidth if all 15 students are remote.  I&#8217;m considering buying a <a href="http://www.linode.com/?r=8304c52b0c2b67372d5dcbe998ee4e04271275d6">Linode</a> for just the bandwidth so I can send one VNC stream of the Instructor VM from the space to the Linode, and then have the Linode &#8220;broadcast&#8221; that to the remote students.  The dedicated student VM VNC sessions would still be sent directly from the space to the remote students.</p>
+    <p>I&#8217;m sharing out two VNC screens per analyst.  The Instructor VM 15 times over, and one dedicated screen per student.  <strong>That&#8217;s a total of 30 concurrent VNC sessions.</strong>  That&#8217;s a lot of bandwidth if all 15 students are remote.  I&#8217;m considering buying a <a href="http://www.linode.com/?r=8304c52b0c2b67372d5dcbe998ee4e04271275d6">Linode</a> for just the bandwidth so I can send one VNC stream of the Instructor VM from the space to the Linode, and then have the Linode &#8220;broadcast&#8221; that to the remote students.  The dedicated student VM VNC sessions would still be sent directly from the space to the remote students.</p>
 
-<p>How to fix: <strong>Buy a linode and limit the number of remote students.</strong></p></li>
-<li><p>Work out the kinks in streaming.</p>
+    <p>How to fix: <strong>Buy a linode and limit the number of remote students.</strong></p>
+  </li>
+  <li>
+    <p>Work out the kinks in streaming.</p>
 
-<p>I heard someone say that the best setup for streaming is just the instructor audio, and then a stream of the slide deck.  E.g., don&#8217;t bother with putting a talking head on screen.  I think I like that idea, and I think that makes things easier for <a href="http://www.ustream.tv/channel/nova-labs-class-room">UStream</a>.</p>
+    <p>I heard someone say that the best setup for streaming is just the instructor audio, and then a stream of the slide deck.  E.g., don&#8217;t bother with putting a talking head on screen.  I think I like that idea, and I think that makes things easier for <a href="http://www.ustream.tv/channel/nova-labs-class-room">UStream</a>.</p>
 
-<p>The audio in the first class wasn&#8217;t that great because I wasn&#8217;t mic&#8217;d directly.  There was a lot of ambient audio in the background.  I think I need to bring either a bluetooth hands-free headset, or bring my <a href="http://www.amazon.com/PlayStation-2-USB-Headset/dp/B00009YEK5">Playstation USB headset</a>.</p>
+    <p>The audio in the first class wasn&#8217;t that great because I wasn&#8217;t mic&#8217;d directly.  There was a lot of ambient audio in the background.  I think I need to bring either a bluetooth hands-free headset, or bring my <a href="http://www.amazon.com/PlayStation-2-USB-Headset/dp/B00009YEK5">Playstation USB headset</a>.</p>
 
-<p>The video cut out on the stream a couple of times - I&#8217;m not sure what caused that :(</p></li>
+    <p>The video cut out on the stream a couple of times - I&#8217;m not sure what caused that :(</p>
+  </li>
 </ul>
-
 </div>
 
 
@@ -196,7 +207,7 @@ I think I can handle this with scripts in OpenVPN, and some <a href="https://www
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2013/05/04/nova-labs-mal100-classes-status/">Nova Labs MAL100 classes: status</a>
+        <a href="/blog/2013/05/04/nova-labs-mal100-classes-status/">Nova Labs MAL100 Classes: Status</a>
       </li>
     
       <li class="post">

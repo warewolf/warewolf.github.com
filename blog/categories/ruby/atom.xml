@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ruby | Technical Generalism]]></title>
   <link href="http://warewolf.github.io/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://warewolf.github.io/"/>
-  <updated>2013-05-13T00:10:35-04:00</updated>
+  <updated>2013-08-09T20:53:01-04:00</updated>
   <id>http://warewolf.github.io/</id>
   <author>
     <name><![CDATA[Richard Harman]]></name>
@@ -36,8 +36,9 @@
   <li>~/.gem/ruby/1.9.1/gems <code>&lt;-- where bundle puts gems</code></li>
 </ul>
 
-<p>The first thing that went wrong was running Ruby&#8217;s version of <code>make</code>, <code>rake</code> as part of <a href="http://octopress.org/docs/setup/">installing the default Octopress theme</a>.  Rake informed me that I was running too new of a version of rake:
-<code>sh Installing the Octopress theme
+<p>The first thing that went wrong was running Ruby&#8217;s version of <code>make</code>, <code>rake</code> as part of <a href="http://octopress.org/docs/setup/">installing the default Octopress theme</a>.  Rake informed me that I was running too new of a version of rake:</p>
+
+<p><code>sh Installing the Octopress theme
 $ rake install
 rake aborted!
 You have already activated rake 0.9.6, but your Gemfile requires rake 0.9.2.2.
@@ -115,8 +116,9 @@ Successfully generated site: source -&gt; public
   system "bash -c 'set; jekyll'"
 </code></p>
 
-<p>And the output:
-<code>sh
+<p>And the output:</p>
+
+<p><code>sh
 ## Generating Site with Jekyll
 identical source/stylesheets/screen.css 
 [.. cut for brevity..]

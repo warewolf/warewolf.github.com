@@ -4,7 +4,7 @@
   <title><![CDATA[Technical Generalism]]></title>
   <link href="http://warewolf.github.io/atom.xml" rel="self"/>
   <link href="http://warewolf.github.io/"/>
-  <updated>2013-08-09T20:53:01-04:00</updated>
+  <updated>2013-09-21T12:52:06-04:00</updated>
   <id>http://warewolf.github.io/</id>
   <author>
     <name><![CDATA[Richard Harman]]></name>
@@ -14,20 +14,54 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Read-only root filesystems]]></title>
+    <link href="http://warewolf.github.io/blog/2013/09/21/read-only-root-filesystems/"/>
+    <updated>2013-09-21T11:47:00-04:00</updated>
+    <category scheme="http://warewolf.github.io/categories/" term="fedora," />
+<category scheme="http://warewolf.github.io/categories/" term="idea" />
+<category scheme="http://warewolf.github.io/categories/" term="linux," />
+<category scheme="http://warewolf.github.io/categories/" term="read-only," />
+<category scheme="http://warewolf.github.io/categories/" term="security," />
+
+    <id>http://warewolf.github.io/blog/2013/09/21/read-only-root-filesystems</id>
+    <content type="html"><![CDATA[<p>This is a quick post - I&#8217;ll flesh it out later, I promise.  I haven&#8217;t posted in a while, and I wanted to brain dump what I&#8217;m working on at home in some VMs.</p>
+
+<p>Long story short: I accept the fact that at some point, all of my computers will be compromised.  Whether that compromise is mass-malware, or some kind of targeted attack is irrelevant.  The point is <em>some kind of unauthorized change</em> will occur.  If I can reduce the number of disk locations that are writable, I can reduce the number of locations an attacker can leverage to remain on my system.<!-- more --></p>
+
+<p>It&#8217;s entirely possible to remain persistent on a system w/o making any changes on-disk, but that&#8217;s outside of the scope of this post.  Lets assume for the sake of argument that the attacker will want to keep my computer compromised.  They&#8217;ll need to make some kind of change so they can stay on the system.  Replacing the binary of a <a href="http://it.slashdot.org/story/13/01/26/0047257/trojanized-ssh-daemon-in-the-wild-sending-passwords-to-iceland">system service with a trojanized one</a>, adding a new service to start on boot (e.g. in /etc/init.d, or in /etc/systemd), modifying some user&#8217;s login scripts, or reoccuring scheduled task (via crond, or atd, etc).</p>
+
+<p>It&#8217;s my goal to reduce the number of locations that the attacker can add new things, or replace existing things to keep their foothold on my system.  If they can&#8217;t add new things to come up on boot, it&#8217;s more difficult.  This isn&#8217;t perfect, but something that could be part of an overall security-minded system posture.</p>
+
+<p>I know that having a UNIX box&#8217;s filesystems read-only isn&#8217;t a pancea, I read an article once that described a specialized UNIX box that had it&#8217;s root filesystem in a read-only flash/PROM device - which the vendor said made it more secure - ultimately, the executables on the read-only device had vulnerabilities, which couldn&#8217;t be patched because the filesystem couldn&#8217;t be modified.  So there are ups and downs of this concept.</p>
+
+<p>Fedora has <a href="http://fedoraproject.org/wiki/StatelessLinux">read-only root</a> support, enabled by /etc/sysconfig/readonly-root.  To get it working on a brand new install, you need to do two or three things.</p>
+
+<ol>
+  <li>Comment out the root filesystem in /etc/fstab - otherwise it will be mounted read-write (this also comes with a side-benefit, alternate root filesystems).</li>
+  <li>Create one or two new filesystems with a specific label for retaining state (read /etc/sysconfig/readonly-root for details).</li>
+</ol>
+
+<p>At this point you should have a read-only root filesystem.  Any other filesystems (like /boot) are most likely still read-write, so you&#8217;d have to change those to read-only if you want them locked down too.</p>
+
+<p>Bonus: <a href="http://www.linode.com/?r=8304c52b0c2b67372d5dcbe998ee4e04271275d6">Linode</a> has an <a href="https://www.linode.com/api/linode/linode.disk.update">API method w/ a read-only flag</a> to set VPS disks to read-only.</p>
+
+<!-- #### Footnotes
+
+[^1]: description
+http://kramdown.rubyforge.org/quickref.html -->
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Passwordless and secure SSH keys for log pulls]]></title>
     <link href="http://warewolf.github.io/blog/2013/05/12/passwordless-and-secure-ssh-keys-for-log-pulls/"/>
     <updated>2013-05-12T23:49:00-04:00</updated>
-    
     <category scheme="http://warewolf.github.io/categories/" term="automation" />
-    
-    <category scheme="http://warewolf.github.io/categories/" term="lockrun" />
-    
-    <category scheme="http://warewolf.github.io/categories/" term="rsync" />
-    
-    <category scheme="http://warewolf.github.io/categories/" term="ssh" />
-    
-    <category scheme="http://warewolf.github.io/categories/" term="sysadmin" />
-    
+<category scheme="http://warewolf.github.io/categories/" term="lockrun" />
+<category scheme="http://warewolf.github.io/categories/" term="rsync" />
+<category scheme="http://warewolf.github.io/categories/" term="ssh" />
+<category scheme="http://warewolf.github.io/categories/" term="sysadmin" />
+
     <id>http://warewolf.github.io/blog/2013/05/12/passwordless-and-secure-ssh-keys-for-log-pulls</id>
     <content type="html"><![CDATA[<p>Secure passwordless SSH keys?  Surely some infosec policy auditor is crying right now.  Here&#8217;s how to pacify them with a couple of options you may or may not have heard of in <code>~/.ssh/authorized_keys</code>.<!-- more --></p>
 
@@ -82,15 +116,11 @@
     <title type="html"><![CDATA[Nova Labs MAL100 classes: status]]></title>
     <link href="http://warewolf.github.io/blog/2013/05/04/nova-labs-mal100-classes-status/"/>
     <updated>2013-05-04T00:29:00-04:00</updated>
-    
     <category scheme="http://warewolf.github.io/categories/" term="libvirt" />
-    
-    <category scheme="http://warewolf.github.io/categories/" term="malware" />
-    
-    <category scheme="http://warewolf.github.io/categories/" term="openvpn" />
-    
-    <category scheme="http://warewolf.github.io/categories/" term="perl" />
-    
+<category scheme="http://warewolf.github.io/categories/" term="malware" />
+<category scheme="http://warewolf.github.io/categories/" term="openvpn" />
+<category scheme="http://warewolf.github.io/categories/" term="perl" />
+
     <id>http://warewolf.github.io/blog/2013/05/04/nova-labs-mal100-classes-status</id>
     <content type="html"><![CDATA[<p>The <a href="http://www.nova-labs.org">Nova Labs</a> MAL100 class in <a href="http://www.meetup.com/NOVA-Makers/events/107980132/">April</a> was a hit, and there&#8217;s one upcoming in  <a href="http://www.meetup.com/NOVA-Makers/events/115134982/">May</a> on the 15th that has already filled up all available slots.  That&#8217;s fantastic, but it&#8217;s going to take forever for me to <em>train</em> everybody if I&#8217;m doing it at 15 students at a time.  I&#8217;ve got some work to do for making things available to students whom are remote.<!-- more --></p>
 
@@ -148,11 +178,9 @@ I think I can handle this with scripts in OpenVPN, and some <a href="https://www
     <title type="html"><![CDATA[Adventures in Ruby]]></title>
     <link href="http://warewolf.github.io/blog/2013/04/28/adventures-in-ruby/"/>
     <updated>2013-04-28T15:44:00-04:00</updated>
-    
     <category scheme="http://warewolf.github.io/categories/" term="octopress" />
-    
-    <category scheme="http://warewolf.github.io/categories/" term="ruby" />
-    
+<category scheme="http://warewolf.github.io/categories/" term="ruby" />
+
     <id>http://warewolf.github.io/blog/2013/04/28/adventures-in-ruby</id>
     <content type="html"><![CDATA[<p>After reading a <a href="http://isrlabs.net/wordpress/?p=169">a blog post on exactly what I needed</a> for students to remotely access the virtual machines in the <a href="http://www.nova-labs.org/">Nova Labs</a> classes, I decided I needed to give back to the community just a bit more.  Because I like github, and because I&#8217;ve used github-pages before, I decided on <a href="http://octopress.org/">Octopress</a>.  I&#8217;d soon find out this wouldn&#8217;t be as simple as setting up github-pages for my <a href="http://warewolf.github.com/thin-provisioning/">thin-provisioning</a> site, which oddly enough appears to be returning a 404 as I compose this post. <em>Sigh</em>.</p>
 

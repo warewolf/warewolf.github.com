@@ -4,7 +4,7 @@
   <title><![CDATA[Technical Generalism]]></title>
   <link href="http://warewolf.github.io/atom.xml" rel="self"/>
   <link href="http://warewolf.github.io/"/>
-  <updated>2013-09-21T13:09:49-04:00</updated>
+  <updated>2013-10-12T17:57:09-04:00</updated>
   <id>http://warewolf.github.io/</id>
   <author>
     <name><![CDATA[Richard Harman]]></name>
@@ -14,14 +14,106 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Setting up a read-only rootfs Fedora box - part 1]]></title>
+    <link href="http://warewolf.github.io/blog/2013/10/12/setting-up-a-read-only-rootfs-fedora-box/"/>
+    <updated>2013-10-12T10:21:00-04:00</updated>
+    <category scheme="http://warewolf.github.io/categories/" term="fedora" />
+<category scheme="http://warewolf.github.io/categories/" term="read-only-root" />
+
+    <id>http://warewolf.github.io/blog/2013/10/12/setting-up-a-read-only-rootfs-fedora-box</id>
+    <content type="html"><![CDATA[<p>For this example/howto I&#8217;m going to be using a Fedora 19 system.  I&#8217;m trying to set up a read-only root VM where it&#8217;s usable as a general Linux server, not as some single-purpose appliance, like a streaming media center server.  Depending on your desired use-case for OS/application data, you have some options for managing data that isn&#8217;t in the read-only root filesystem.</p>
+
+<p>There are two basic concepts in Fedora&#8217;s implementation of read-only root.  A temporary scratch space, and a persistent storage space.  You will ultimately always end up using the temporary scratch space, so the persistent storage space is optional.<!-- more --></p>
+
+<p>In Fedora/RHEL (or variants based on RHEL like CentOS and Scientific Linux), the primary config file that sets up read-only root filesystems is <code>/etc/sysconfig/readonly-root</code>.  That&#8217;s what is read by the system startup scripts.  You can read a bit about it <a href="http://fedoraproject.org/wiki/StatelessLinux/PrepareImage">here</a> &#8211; don&#8217;t let the documentation there referencing really old versions of Fedora faze you; this all still works.  I went ahead and rolled my own install image, bypassing the suggested used of cobbler.</p>
+
+<h3 id="scratch-space-stateless">Scratch space (stateless)</h3>
+<p>The Scratch space (<code>RW_MOUNT</code> and <code>RW_LABEL</code> in <code>/etc/sysconfig/readonly-root</code>) is used to store transient things, like the contents of /tmp.  There are three sets of files and directories that dictate what ends up in scratch space:</p>
+
+<p><code>/etc/rwtab</code>, <code>/etc/rwtab.d/*</code>, and <code>/run/initramfs/rwtab</code>.  The initramfs rwtab file points to things that are set up by the initial ramdisk. In the case of my desktop at home that boots via iPXE and has an iSCSI boot disk, this contains PXE-provided network configuration.  The rest are distribution-specific defaults (<code>/etc/rwtab</code>), or entirely user configurable (<code>/etc/rwtab.d/*</code>).</p>
+
+<p>The scratch space can be a RAM-backed tmpfs filesystem, or a filesystem on a block device depending on how you configure readonly-root support.</p>
+
+<p><em>Note</em>: the contents of the scratch space is wiped clean on every boot, regardless of it being a filesytem on-disk or not.</p>
+
+<h3 id="persistent-storage-stateful">Persistent storage (stateful)</h3>
+<p>The persistent storage area is for things you want to keep around between reboots.  This could be host-specific things like SSH host keys, configuration files, etc - if they&#8217;re not already present in the read-only root filesystem.  Imagine an entire data center of Linux boxes that all share a common, read-only root filesystem, and the things that keep them different are stored in the persistent storage.  I imagine big &#8220;cloud&#8221; vendors do this.</p>
+
+<p>The defaults for persistent storage is to store nothing at all.  The configuration for the persistent storage are <code>/etc/statetab</code> and <code>/etc/statetab.d/*</code>, &amp; they are used the same way the scratch space is configured.</p>
+
+<p>But there&#8217;s an important thing to take note of: these persistent files/directories are <em>bind-mount overlays</em><sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> from the stateful storage into the read-only root filesystem.  This is where things can get a little weird, so I&#8217;ll explain by way of example that I actually ran into that failed because of the bind-mount.</p>
+
+<h4 id="trying-to-put-user-account-information-into-persistent-storage">Trying to put user account information into persistent storage</h4>
+
+<p>Normally, user account information on a UNIX box is stored in <code>/etc/passwd</code>, <code>/etc/shadow</code>, <code>/etc/group</code>, and <code>/etc/gshadow</code>.  I added those files to a /etc/statetab.d/system-auth file, and copied the files to <code>/var/lib/stateless/state/etc</code>.  Rebooted, logged in successfully, and tried to change a password:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Trying to change a password on a read-only root filesystem</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="text"><span class="line">[root@localhost]# passwd root
+</span><span class="line">Changing password for user root.
+</span><span class="line">New password:
+</span><span class="line">Retype new password:
+</span><span class="line">passwd: Authentication token manipulation error
+</span><span class="line">[root@localhost]#
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Why did this happen? It&#8217;s because of the way <code>/etc/passwd</code> and friends are updated when user account information is changed.  A temporary file for each is created, named /etc/n<em>filename</em>, that one is modified, and then the temporary file is renamed over-top of the old one.  This actually tries to make a change on the read-only filesystem twice: the first is the creation of a new file on the read-only filesystem, and the second is the rename process.  The rename process tries to modify the filesystem inode<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> to re-point where the filename is pointing to data on disk.  None of this happens, so it dies with the <em>ever so useful</em> token manipulation error message.</p>
+
+<p>You&#8217;re probably thinking: &#8220;Wouldn&#8217;t it just be easier just to copy the contents of the <code>/etc/npasswd</code> file into <code>/etc/passwd</code>?&#8221; - it might be, but you run the risk of wiping out your password files if there isn&#8217;t room for one complete copy of the file on disk.  That&#8217;s why a temporary file is created, and renamed over-top.  It also helps prevent race-conditions reading the files, since the rename is atomic.  Atomic means &#8220;either this happened or it didn&#8217;t happen at all&#8221;.  A copy is <em>not</em> atomic, so you could read the complete contents of the file from disk - while data is still being added to the end.</p>
+
+<p>But I&#8217;m not letting this stop me: I&#8217;m going to move nearly all the user accounts of <code>/etc/passwd</code> and friends, and use LDAP.  LDAP will be hosted in /var, in the persistent storage space, and in the event that fails, I&#8217;ll have a backup account in <code>/etc/passwd</code> that has an absurdly complex password, and is only used in emergencies.</p>
+
+<h3 id="configuration-of-persistent--scratch-space">Configuration of persistent &amp; scratch space</h3>
+
+<p>You can specify the filesystems for storage by listing them in /etc/fstab, or by labeling them with the <code>tune2fs -L</code> command.</p>
+
+<ul>
+  <li>Scratch label: <code>tune2fs -L stateless-rw /dev/sdXn</code></li>
+  <li>
+    <p>Scratch fstab mount point: <code>/var/lib/stateless/writable</code></p>
+  </li>
+  <li>Persistent label: <code>tune2fs -L stateless-state /dev/sdXn</code></li>
+  <li>Persistent fstab mount point: <code>/var/lib/stateless/state</code></li>
+</ul>
+
+<p>For the scratch space, you can make use of a tmpfs RAM filesystem instead of an on-disk filesystem by not having a <code>/var/lib/stateless/writable</code>  mount point in <code>/etc/fstab</code>, and not applying a <code>stateless-rw</code> label to a filesystem.  Be aware that the size of that tmpfs filesystem is limited to 1/2 your system memory.</p>
+
+<h3 id="next-post">Next post</h3>
+<p>The next post will cover the installation of a bare minimum Fedora 19 install, configuring it to be a read-only root filesystem, and the gotchas I found along the way.</p>
+
+<h5 id="footnotes">Footnotes:</h5>
+
+<!-- categories are space delimited!
+#### Footnotes
+
+[^1]: description
+http://kramdown.rubyforge.org/quickref.html -->
+<div class="footnotes">
+  <ol>
+    <li id="fn:1">
+      <p>A bind mount is <code>mount --bind /source/path /destination/path</code> - this overlays the source file on top of the destination file.<a href="#fnref:1" rel="reference">&#8617;</a></p>
+    </li>
+    <li id="fn:2">
+      <p><a href="http://en.wikipedia.org/wiki/Inode">Inode</a> on Wikipedia<a href="#fnref:2" rel="reference">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Read-only root filesystems]]></title>
     <link href="http://warewolf.github.io/blog/2013/09/21/read-only-root-filesystems/"/>
     <updated>2013-09-21T11:47:00-04:00</updated>
-    <category scheme="http://warewolf.github.io/categories/" term="fedora," />
+    <category scheme="http://warewolf.github.io/categories/" term="fedora" />
 <category scheme="http://warewolf.github.io/categories/" term="idea" />
-<category scheme="http://warewolf.github.io/categories/" term="linux," />
-<category scheme="http://warewolf.github.io/categories/" term="read-only," />
-<category scheme="http://warewolf.github.io/categories/" term="security," />
+<category scheme="http://warewolf.github.io/categories/" term="linux" />
+<category scheme="http://warewolf.github.io/categories/" term="read-only-root" />
+<category scheme="http://warewolf.github.io/categories/" term="security" />
 
     <id>http://warewolf.github.io/blog/2013/09/21/read-only-root-filesystems</id>
     <content type="html"><![CDATA[<p>This is a quick post - I&#8217;ll flesh it out later, I promise.  I haven&#8217;t posted in a while, and I wanted to brain dump what I&#8217;m working on at home in some VMs.</p>
